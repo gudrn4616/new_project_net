@@ -45,5 +45,3 @@ export const PacketType = {
   MONSTER_DEATH_NOTIFICATION: 20,
   ENEMY_MONSTER_DEATH_NOTIFICATION: 21,
 };
-
-module.exports = PacketType;

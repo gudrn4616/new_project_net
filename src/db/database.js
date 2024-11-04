@@ -4,13 +4,14 @@ import { formatDate } from '../utils/dataFormatter.js';
 
 const { db } = config;
 
-const createPool = async (dbconfig) => {
+// 데이터베이스 커넥션 풀 생성 함수
+const createPool = (dbConfig) => {
   const pool = mysql.createPool({
-    host: dbconfig.host,
-    port: dbconfig.port,
-    user: dbconfig.user,
-    password: dbconfig.password,
-    database: dbconfig.database,
+    host: dbConfig.host,
+    port: dbConfig.port,
+    user: dbConfig.user,
+    password: dbConfig.password,
+    database: dbConfig.name,
     waitForConnections: true,
     connectionLimit: 10, // 커넥션 풀에서 최대 연결 수
     queueLimit: 0, // 0일 경우 무제한 대기열
@@ -30,8 +31,9 @@ const createPool = async (dbconfig) => {
   return pool;
 };
 
-const pool = {
+// 여러 데이터베이스 커넥션 풀 생성
+const pools = {
   USER_DB: createPool(db),
 };
 
-export default pool;
+export default pools;

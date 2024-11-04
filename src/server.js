@@ -1,14 +1,16 @@
 import net from 'net';
-import onConnections from './events/onConnections.js';
+import { config } from './config/config.js';
+import { onConnections } from './events/onConnections.js';
 import initServer from './init/index.js';
 const server = net.createServer(onConnections);
 
 initServer()
   .then(() => {
-    server.listen(3000, () => {
-      console.log('Server is running on port 3000');
+    server.listen(config.server.port, () => {
+      console.log(`서버가 ${config.server.host}:${config.server.port}에서 실행 중입니다`);
     });
   })
-  .catch((error) => {
-    console.error('서버 초기화 중 오류가 발생했습니다:', error);
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
   });
