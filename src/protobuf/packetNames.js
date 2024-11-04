@@ -1,5 +1,5 @@
 export const packetNames = {
   common: {
-    packetHeader: 'common.PacketHeader',
+    packetHeader: 'common.Packet',
   },
 };
