@@ -1,3 +1,7 @@
 export const RESPONSE_SUCCESS_CODE = 0;
 
-export const HANDLER_IDS = {};
+export const HANDLER_IDS = {
+  MONSTER_SPAWN: 1,
+  MONSTER_ATTACK: 2,
+  UPDATE_BASE: 3,
+};
