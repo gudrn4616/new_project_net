@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package common;
 
-message PacketHeader {
+message Packet {
   uint32 packet_type = 1;  // 패킷 타입 (2바이트)
   uint32 version_length = 2;  // 버전 길이 (1바이트) 
   string version = 3;  // 버전 (문자열)
