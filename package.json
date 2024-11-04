@@ -18,6 +18,9 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.7",
-    "prettier": "^3.3.3"
-  }
+    "prettier": "^3.3.3",
+    "prettierrc": "^0.0.0-5"
+  },
+  "repository": "https://github.com/gudrn4616/new_project_net.git",
+  "author": "rabbit-97 <uzam97@gmail.com>"
 }
