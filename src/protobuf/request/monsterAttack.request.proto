@@ -4,9 +4,6 @@ package request;
 
 import "./common.proto";
 
-message C2SSpawnMonsterRequest {
-}
-
 message C2SMonsterAttackBaseRequest {
   int32 damage = 1;
 }

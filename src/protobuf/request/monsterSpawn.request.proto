@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package request;
+
+import "./common.proto";
+
+message C2SSpawnMonsterRequest {
+}
