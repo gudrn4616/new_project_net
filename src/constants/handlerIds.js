@@ -1,3 +1,6 @@
 export const RESPONSE_SUCCESS_CODE = 0;
 
-export const HANDLER_IDS = {};
+export const HANDLER_IDS = {
+  MATCH_REQUEST: 5,
+  MATCH_START_NOTIFICATION: 6,
+};

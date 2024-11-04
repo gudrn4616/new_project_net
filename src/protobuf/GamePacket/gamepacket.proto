@@ -80,7 +80,7 @@ message S2CLoginResponse {       // 서버->클라이언트 로그인 응답
 message C2SMatchRequest {        // 클라이언트->서버 매칭 요청
 }
 
-message S2CMatchStartNotification { // 서버->클라이언트 매칭 시작 알림
+message S2CMatchStartNotification { // 서버->클라이언트 매칭 완료 알림
   InitialGameState initialGameState = 1; // 초기 게임 상태
   GameState playerData = 2;      // 플레이어 데이터
   GameState opponentData = 3;    // 상대방 데이터
