@@ -10,3 +10,44 @@ message Packet {
   uint32 payload_length = 5;  // 데이터 길이 (4바이트)
   bytes payload = 6;  // 실제 데이터
 }
+/* 게임 데이터 명세 */
+message Position {
+  float x = 1;
+  float y = 2;
+}
+
+message BaseData {
+  int32 hp = 1;
+  int32 maxHp = 2;
+}
+
+message TowerData {
+  int32 towerId = 1;
+  float x = 2;
+  float y = 3;
+}
+
+message MonsterData {
+  int32 monsterId = 1;
+  int32 monsterNumber = 2;
+  int32 level = 3;
+}
+
+message InitialGameState {
+  int32 baseHp = 1;
+  int32 towerCost = 2;
+  int32 initialGold = 3;
+  int32 monsterSpawnInterval = 4;
+}
+
+message GameState {
+  int32 gold = 1;
+  BaseData base = 2;
+  int32 highScore = 3;
+  repeated TowerData towers = 4;
+  repeated MonsterData monsters = 5;
+  int32 monsterLevel = 6;
+  int32 score = 7;
+  repeated Position monsterPath = 8;
+  Position basePosition = 9;
+}
