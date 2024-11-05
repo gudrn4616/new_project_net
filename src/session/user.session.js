@@ -22,6 +22,7 @@ export const getUser = (socket) => {
   return userSessions.find((user) => user.socket === socket);
 };
 
-export const randomUser = () => {
-  return userSessions[Math.floor(Math.random() * userSessions.length)];
+export const getRandomUser = (socket) => {
+  const users = userSessions.filter((user) => user.socket !== socket);
+  return users[Math.floor(Math.random() * users.length)];
 };

@@ -1,76 +1,69 @@
+import initialGameState from './initialGameState.js';
+
 class Game {
   constructor(user1, user2) {
     this.users = [user1, user2];
-    this.isGameStart = false;
-
-    // 초기 게임 상태 설정
-    const initialGameState = {
-      baseHp: 100,
-      towerCost: 100,
-      initialGold: 5000,
-      monsterSpawnInterval: 5000,
-    };
 
     this.baseHp = {
-      [user1.id]: initialGameState.baseHp,
-      [user2.id]: initialGameState.baseHp,
+      [user1.socket]: initialGameState.baseHp,
+      [user2.socket]: initialGameState.baseHp,
     };
 
     this.towerCost = initialGameState.towerCost;
 
     this.gold = {
-      [user1.id]: initialGameState.initialGold,
-      [user2.id]: initialGameState.initialGold,
+      [user1.socket]: initialGameState.initialGold,
+      [user2.socket]: initialGameState.initialGold,
     };
 
     this.monsterSpawnInterval = initialGameState.monsterSpawnInterval;
 
     this.topScore = {
-      [user1.id]: 0,
-      [user2.id]: 0,
+      [user1.socket]: 0,
+      [user2.socket]: 0,
     };
 
     this.score = {
-      [user1.id]: 0,
-      [user2.id]: 0,
+      [user1.socket]: 0,
+      [user2.socket]: 0,
     };
 
     this.monsterLevel = {
-      [user1.id]: 1,
-      [user2.id]: 1,
+      [user1.socket]: 1,
+      [user2.socket]: 1,
     };
 
     this.towers = {
-      [user1.id]: [],
-      [user2.id]: [],
+      [user1.socket]: [],
+      [user2.socket]: [],
     };
 
     this.monsters = {
-      [user1.id]: [],
-      [user2.id]: [],
+      [user1.socket]: [],
+      [user2.socket]: [],
     };
 
     this.monsterPath = {
-      [user1.id]: [],
-      [user2.id]: [],
+      [user1.socket]: [],
+      [user2.socket]: [],
     };
 
     this.basePosition = {
-      [user1.id]: { x: 0, y: 0 },
-      [user2.id]: { x: 0, y: 0 },
+      [user1.socket]: { x: 0, y: 0 },
+      [user2.socket]: { x: 0, y: 0 },
     };
 
     this.lastMonsterSpawn = {
-      [user1.id]: 0,
-      [user2.id]: 0,
+      [user1.socket]: 0,
+      [user2.socket]: 0,
     };
   }
 
   getInitialGameState() {
     return {
-      baseHp: this.baseHp[this.users[0].id],
+      baseHp: this.baseHp[this.users[0].socket],
       towerCost: this.towerCost,
-      initialGold: this.gold[this.users[0].id],
+      initialGold: this.gold[this.users[0].socket],
       monsterSpawnInterval: this.monsterSpawnInterval,
     };
   }

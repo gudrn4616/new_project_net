@@ -50,3 +50,14 @@ export const createMatchRequest = (socket, data) => {
   const matchStartPacket = matchStartNotification.encode(message).finish();
   return makePacket(matchStartPacket, PacketType.MATCH_START_NOTIFICATION);
 };
+
+export const createGameEndRequest = (socket, data) => {
+  const protoMessages = getProtoMessages();
+  const gameEndNotification = protoMessages.S2CGameEndNotification;
+  const payload = {
+    isWin: data.isWin,
+  };
+  const message = gameEndNotification.create(payload);
+  const gameEndPacket = gameEndNotification.encode(message).finish();
+  return makePacket(gameEndPacket, PacketType.GAME_END_REQUEST);
+};
