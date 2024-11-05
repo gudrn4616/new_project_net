@@ -1,5 +1,3 @@
-export default function onError(server) {
-  server.on('error', (err) => {
-    console.error(err);
-  });
-}
+export const onError = (socket) => (err) => {
+  console.error(err);
+};

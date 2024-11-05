@@ -1,5 +1,3 @@
-export default function onEnd(socket) {
-  socket.on('end', () => {
-    console.log('Connection closed');
-  });
-}
+export const onEnd = (socket) => () => {
+  console.log('Connection closed');
+};
