@@ -12,7 +12,6 @@ const {
   SEQUENCE,
   PAYLOAD_LENGTH,
 } = PACKET_HEADER_SIZES;
-
 const TOTAL_HEADER_LENGTH = PACKET_TYPE_LENGTH + VERSION_LENGTH + SEQUENCE + PAYLOAD_LENGTH;
 
 export const onData = (socket) => (data) => {
@@ -34,30 +33,47 @@ export const onData = (socket) => (data) => {
       socket.buffer = socket.buffer.subarray(TOTAL_HEADER_LENGTH + payloadLength);
 
       try {
-        // 게임 관련 패킷 타입만 처리하도록 업데이트
-        switch (packetType) {
-          case PacketType.MONSTER_SPAWN:
-          case PacketType.MONSTER_ATTACK:
-          case PacketType.UPDATE_BASE:
-            {
-              const { handlerId, userId, payload } = packetParser(packet);
-              const handler = getHandlerById(handlerId);
-              const protoTypeName = getProtoTypeNameByHandlerId(handlerId);
-
-              const decodedPayload = protobuf.lookupType(protoTypeName).decode(payload);
-
-              handler({ socket, userId, payload: decodedPayload });
-            }
-            break;
-
-          default:
-            throw new CustomError(ErrorCodes.PACKET_DECODE_ERROR, 'packet type is not supported.');
-        }
+        handlePacket(packetType, packet, socket);
       } catch (error) {
+        console.error(`Packet handling error: ${error.message}`);
         throw new CustomError(ErrorCodes.PACKET_DECODE_ERROR, error.message);
       }
     } else {
       break;
     }
   }
+};
+
+const handlePacket = (packetType, packet, socket) => {
+  try {
+    switch (packetType) {
+      case PacketType.SPAWN_MONSTER_REQUEST:
+      case PacketType.SPAWN_MONSTER_RESPONSE:
+      case PacketType.SPAWN_ENEMY_MONSTER_NOTIFICATION:
+      case PacketType.MONSTER_ATTACK_BASE_REQUEST:
+      case PacketType.UPDATE_BASE_HP_NOTIFICATION:
+        processGamePacket(packet, socket);
+        break;
+      default:
+        throw new CustomError(ErrorCodes.PACKET_DECODE_ERROR, 'packet type is not supported.');
+    }
+  } catch (error) {
+    console.error(`Packet processing error: ${error.message}`);
+    throw error;
+  }
+};
+
+const processGamePacket = (packet, socket) => {
+  const { handlerId, userId, payload } = packetParser(packet);
+  const handler = getHandlerById(handlerId);
+  const protoTypeName = getProtoTypeNameByHandlerId(handlerId);
+
+  if (!handler || !protoTypeName) {
+    const errorMsg = `Handler or proto type not found for handlerId ${handlerId}`;
+    console.error(errorMsg);
+    throw new CustomError(ErrorCodes.PACKET_DECODE_ERROR, errorMsg);
+  }
+
+  const decodedPayload = protobuf.lookupType(protoTypeName).decode(payload);
+  handler({ socket, userId, payload: decodedPayload });
 };
