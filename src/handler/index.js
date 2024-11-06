@@ -1,15 +1,20 @@
-import { HANDLER_IDS } from '../constants/handlerId.js';
-import { locationUpdateHandler } from './game/locationUpdate.handler.js';
-import initialHandler from './user/initial.handler.js';
+import { HANDLER_IDS } from '../constants/handlerIds.js';
+import updateBaseHandler from './base/updateBase.handler.js';
+import monsterAttackHandler from './monster/monsterAttack.handler.js';
+import monsterSpawnHandler from './monster/monsterSpawn.handler.js';
 
 const handlers = {
-  [HANDLER_IDS.INITIAL]: {
-    handler: initialHandler,
-    protoType: 'initial.InitialPayload',
+  [HANDLER_IDS.MONSTER_SPAWN]: {
+    handler: monsterSpawnHandler,
+    protoType: 'request.spawnMonsterRequest',
   },
-  [HANDLER_IDS.LOCATION_UPDATE]: {
-    handler: locationUpdateHandler,
-    protoType: 'game.LocationUpdatePayload',
+  [HANDLER_IDS.MONSTER_ATTACK]: {
+    handler: monsterAttackHandler,
+    protoType: 'request.monsterAttackBaseRequest',
+  },
+  [HANDLER_IDS.UPDATE_BASE]: {
+    handler: updateBaseHandler,
+    protoType: 'request.updateBaseRequest',
   },
 };
 
