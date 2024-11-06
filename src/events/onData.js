@@ -1,5 +1,7 @@
 import { config } from '../config/config.js';
-import { PACKET_TYPE } from '../constants/header.js';
+import { getProtoMessages } from '../init/loadProtos.js';
+import { getHandlerById, getProtoTypeNameByHandlerId } from '../handlers/index.js';
+
 export const onData = (socket) => (data) => {
   socket.buffer = Buffer.concat([socket.buffer, data]);
 
@@ -11,14 +13,15 @@ export const onData = (socket) => (data) => {
     config.packet.header.payloadLength;
 
   while (socket.buffer.length >= totalHeaderLength) {
+    const decodedPacket = getProtoMessages();
+
     // 패킷 타입 읽기 (2바이트)
-    const packetType = socket.buffer.readUInt16BE(0, config.packet.header.packetType);
+    const packetType = socket.buffer.readUInt16BE(0);
+    console.log(packetType);
 
     // 버전 길이 읽기 (1바이트)
-    const versionLength = socket.buffer.readUInt8(
-      config.packet.header.packetType,
-      config.packet.header.versionLength,
-    );
+    const versionLength = socket.buffer.readUInt8(config.packet.header.packetType);
+    console.log(versionLength);
 
     // 버전 문자열 읽기
     const version = socket.buffer.toString(
@@ -26,18 +29,16 @@ export const onData = (socket) => (data) => {
       config.packet.header.packetType + config.packet.header.versionLength,
       config.packet.header.packetType + config.packet.header.versionLength + versionLength,
     );
-
+    console.log(version);
     if (version !== config.client.version) {
       throw new Error('Invalid version');
     }
 
     // 시퀀스 번호 읽기 (4바이트)
     const sequence = socket.buffer.readUInt32BE(
-      config.packet.header.packetType +
-        config.packet.header.versionLength +
-        versionLength +
-        config.packet.header.sequence,
+      config.packet.header.packetType + config.packet.header.versionLength + versionLength,
     );
+    console.log(sequence);
 
     // 페이로드 길이 읽기 (4바이트)
     const payloadLength = socket.buffer.readUInt32BE(
@@ -46,29 +47,40 @@ export const onData = (socket) => (data) => {
         versionLength +
         config.packet.header.sequence,
     );
+    console.log(payloadLength);
 
-    if (socket.buffer.length >= totalHeaderLength) {
-      const packet = socket.buffer.subarray(
-        totalHeaderLength + versionLength,
-        totalHeaderLength + versionLength + payloadLength,
-      );
-      socket.buffer = socket.buffer.subarray(totalHeaderLength + versionLength + payloadLength);
+    if (socket.buffer.length >= totalHeaderLength + payloadLength) {
+      const packetStartIndex = totalHeaderLength + versionLength;
+      const gamePacket = socket.buffer.subarray(packetStartIndex, packetStartIndex + payloadLength);
+      socket.buffer = socket.buffer.subarray(packetStartIndex + payloadLength);
+
+      console.log('Buffer:', gamePacket);
+
       try {
-        switch (packetType) {
-          case PacketType.MATCH_REQUEST:
-            break;
+        const protoTypeName = getProtoTypeNameByHandlerId(packetType);
+        const [namespace, typeName] = protoTypeName.split('.');
+        // payload 추출 하기 위해 gamepacket으로 디코딩
+        const decodedMessage = decodedPacket['gamePacket']['GamePacket'].decode(gamePacket);
+        console.log('Decoded Packet:', decodedMessage);
+        let payload;
+        for (const [key, value] of Object.entries(decodedMessage)) {
+          payload = value;
+        }
+        const expectedFields = Object.keys(decodedPacket[namespace][typeName].fields);
+        const actualFields = Object.keys(payload);
+        const missingFields = expectedFields.filter((field) => !actualFields.includes(field));
+        if (missingFields.length > 0) {
+          throw new Error(`Missing fields: ${missingFields.join(', ')}`);
         }
       } catch (error) {
-        console.error(error);
+        if (error instanceof RangeError) {
+          console.error('RangeError: index out of range', error);
+        } else {
+          console.error('Decoding Error:', error);
+        }
       }
-
+    } else {
       break;
     }
-
-    // 페이로드 읽기
-    const payload = socket.buffer.slice(11 + versionLength, 11 + versionLength + payloadLength);
-
-    // 나머지 버퍼 업데이트
-    socket.buffer = socket.buffer.slice(totalLength);
   }
 };
