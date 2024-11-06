@@ -15,7 +15,10 @@ const {
 const TOTAL_HEADER_LENGTH = PACKET_TYPE_LENGTH + VERSION_LENGTH + SEQUENCE + PAYLOAD_LENGTH;
 
 export const onData = (socket) => (data) => {
+  console.log('Received data:', data);
+
   socket.buffer = Buffer.concat([socket.buffer, data]);
+  console.log('Updated socket buffer:', socket.buffer);
 
   while (socket.buffer.length > TOTAL_HEADER_LENGTH) {
     const packetType = socket.buffer.readUInt16BE(0);
@@ -25,12 +28,16 @@ export const onData = (socket) => (data) => {
       PACKET_TYPE_LENGTH + VERSION_LENGTH + SEQUENCE,
     );
 
+    console.log('Packet detected:', { packetType, version, sequence, payloadLength });
+
     if (socket.buffer.length >= TOTAL_HEADER_LENGTH + payloadLength) {
       const packet = socket.buffer.subarray(
         TOTAL_HEADER_LENGTH,
         TOTAL_HEADER_LENGTH + payloadLength,
       );
       socket.buffer = socket.buffer.subarray(TOTAL_HEADER_LENGTH + payloadLength);
+
+      console.log('Extracted packet:', packet);
 
       try {
         handlePacket(packetType, packet, socket);
@@ -39,12 +46,15 @@ export const onData = (socket) => (data) => {
         throw new CustomError(ErrorCodes.PACKET_DECODE_ERROR, error.message);
       }
     } else {
+      console.log('Insufficient data for full packet, waiting for more data.');
       break;
     }
   }
 };
 
 const handlePacket = (packetType, packet, socket) => {
+  console.log('Handling packet of type:', packetType);
+
   try {
     switch (packetType) {
       case PacketType.SPAWN_MONSTER_REQUEST:
@@ -65,8 +75,12 @@ const handlePacket = (packetType, packet, socket) => {
 
 const processGamePacket = (packet, socket) => {
   const { handlerId, userId, payload } = packetParser(packet);
+  console.log('Parsed packet:', { handlerId, userId, payload });
+
   const handler = getHandlerById(handlerId);
   const protoTypeName = getProtoTypeNameByHandlerId(handlerId);
+
+  console.log('Handler and ProtoType:', { handler, protoTypeName });
 
   if (!handler || !protoTypeName) {
     const errorMsg = `Handler or proto type not found for handlerId ${handlerId}`;
@@ -75,5 +89,7 @@ const processGamePacket = (packet, socket) => {
   }
 
   const decodedPayload = protobuf.lookupType(protoTypeName).decode(payload);
+  console.log('Decoded payload:', decodedPayload);
+
   handler({ socket, userId, payload: decodedPayload });
 };

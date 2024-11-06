@@ -7,7 +7,8 @@ export const onConnections = (socket) => {
 
   socket.buffer = Buffer.alloc(0);
 
-  socket.on('data', onData(socket));
-  socket.on('end', onEnd(socket));
-  socket.on('error', onError(socket));
+  // 클로저로 전달하여 소켓 핸들러 설정
+  socket.on('data', (data) => onData(socket)(data));
+  socket.on('end', () => onEnd(socket)());
+  socket.on('error', (err) => onError(socket)(err));
 };
