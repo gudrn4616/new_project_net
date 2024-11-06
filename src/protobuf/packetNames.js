@@ -9,8 +9,8 @@ export const packetNames = {
     gameState: 'common.GameState',
   },
   Notification: {
-    updateBaseNotification: 'notification.S2CUpdateBaseNotification',
-    spawnEnemyMonsterNotification: 'Notification.S2CSpawnEnemyMonsterNotification',
+    updateBaseNotification: 'notification.S2CUpdateBaseHPNotification',
+    spawnEnemyMonsterNotification: 'notification.S2CSpawnEnemyMonsterNotification',
   },
   request: {
     spawnMonsterRequest: 'request.C2SSpawnMonsterRequest',

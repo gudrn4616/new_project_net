@@ -6,15 +6,15 @@ import monsterSpawnHandler from './monster/monsterSpawn.handler.js';
 const handlers = {
   [HANDLER_IDS.MONSTER_SPAWN]: {
     handler: monsterSpawnHandler,
-    protoType: 'request.spawnMonsterRequest',
+    protoType: 'request.C2SSpawnMonsterRequest',
   },
   [HANDLER_IDS.MONSTER_ATTACK]: {
     handler: monsterAttackHandler,
-    protoType: 'request.monsterAttackBaseRequest',
+    protoType: 'request.C2SMonsterAttackBaseRequest',
   },
   [HANDLER_IDS.UPDATE_BASE]: {
     handler: updateBaseHandler,
-    protoType: 'request.updateBaseRequest',
+    protoType: 'notification.S2CUpdateBaseHPNotification',
   },
 };
 
