@@ -1,5 +1,9 @@
 export const packetNames = {
+  sign: {
+    C2SRegisterRequest: 'sign.C2SRegisterRequest',
+    C2SLoginRequest: 'sign.C2SLoginRequest',
+  },
   common: {
-    packetHeader: 'common.Packet',
+    Packet: 'common.Packet',
   },
 };
