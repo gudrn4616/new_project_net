@@ -1,5 +1,5 @@
 import { userSessions } from './sessions.js';
-import User from '../class/models/user.class.js';
+import User from '../classes/models/user.class.js';
 
 export const addUser = (socket, id, playerId, latency) => {
   const user = new User(socket, id, playerId, latency);
