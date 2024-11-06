@@ -4,7 +4,7 @@ syntax = "proto3";
 package registerRequest;
 
 message C2SRegisterRequest {
-  string id = 1;
-  string password = 2;
-  string email = 3;
+  string Id = 1;
+  string Password = 2;
+  string Email = 3;
 }

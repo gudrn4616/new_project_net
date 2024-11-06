@@ -1,10 +1,10 @@
 import { PACKET_HEADER_SIZES } from '../constants/header.js';
-import { getProtoMessages } from '../init/loadProtos.js';
+import { getProtoMessages, loadProtos } from '../init/loadProtos.js';
 import { getHandlerByPacketType } from '../handler/index.js';
 import { PacketType } from '../constants/header.js';
 import userRegisterHandler from '../handler/user/userRegister.handler.js';
 
-export const onData = (socket) => async (data) => {
+export const onData = (socket) => (data) => {
   socket.buffer = Buffer.concat([socket.buffer, data]);
 
   //헤더 사이즈 정의
@@ -54,10 +54,10 @@ export const onData = (socket) => async (data) => {
     try {
       
       const decodedPacket = getProtoMessages();
-      let test1 = decodedPacket['registerRequest']['packetHeader'].decode(payload)
-
+      let test1 = decodedPacket.registerRequest.packetHeader.decode(payload)
+      let test2= decodedPacket['registerRequest']['packetHeader'].decode(payload)
+      console.log("test2:",test2)
       console.log("test1:",test1)
-
 
       
       // const handler = getHandlerByPacketType(packetType);
@@ -65,16 +65,44 @@ export const onData = (socket) => async (data) => {
       //   handler(socket, decodedPacket);
       // }
 
-      switch (packetType) {
-        case PacketType.REGISTER_REQUEST:
-          await userRegisterHandler(socket, decodedPacket.registerRequest);
-          break;
-        case PacketType.LOGIN_REQUEST:
-          await userLoginhandler(socket, decodedPacket.loginRequest);
-          break;
-      }
+      // switch (packetType) {
+      //   case PacketType.REGISTER_REQUEST:
+      //     await userRegisterHandler(socket, decodedPacket.registerRequest);
+      //     break;
+      //   case PacketType.LOGIN_REQUEST:
+      //     await userLoginhandler(socket, decodedPacket.loginRequest);
+      //     break;
+      // }
     } catch (err) {
       console.error('패킷 처리 에러:', err);
     }
+  }
+};
+
+
+const decodePayload = async (payload, namespace, type) => {
+  try {
+    // 프로토 메시지를 로드합니다.
+    
+    const protoMessages = getProtoMessages();
+
+    // 네임스페이스와 메시지 타입을 찾습니다.
+    const MessageType = protoMessages[namespace]?.[type];
+    if (!MessageType) {
+      throw new Error(`Message type ${namespace}.${type}을 찾을 수 없습니다.`);
+    }
+
+    // payload를 디코딩합니다.
+    const decodedMessage = MessageType.decode(payload);
+
+    // 각 필드의 값 확인
+    const { id, password, email } = decodedMessage;
+    console.log("ID:", id);
+    console.log("Password:", password);
+    console.log("Email:", email);
+
+    return { id, password, email };
+  } catch (error) {
+    console.error('Payload 디코딩 중 오류가 발생했습니다:', error);
   }
 };

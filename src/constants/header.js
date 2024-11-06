@@ -6,6 +6,7 @@ export const PACKET_HEADER_SIZES = {
 };
 
 export const PacketType = {
+  NONE:0,
   // 회원가입 및 로그인
   REGISTER_REQUEST: 1,
   REGISTER_RESPONSE: 2,
