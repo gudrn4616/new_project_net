@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package loginResponse;
+
 message S2CLoginResponse {
   bool success = 1;
   string message = 2;

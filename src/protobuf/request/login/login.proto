@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package loginRequest;
+
 message C2SLoginRequest {
   string id = 1;
   string password = 2;
