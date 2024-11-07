@@ -1,22 +1,14 @@
-import { HANDLER_IDS } from '../constants/handlerIds.js';
+import userRegisterHandler from './user/userRegister.handler.js';
+import userLoginHandler from './user/userLogin.handler.js';
+import { endGameHandler, matchHandler } from './game/match.handler.js';
+import spawnMonsterRequestHandler from './request/spawnMonsterRequest.handler.js';
+import spawnMonsterResponseHandler from './response/spawnMonsterResponse.handler.js';
+import spawnEnemyMonsterNotificationHandler from './notification/spawnEnemyMonsterNotification.handler.js';
+import monsterAttackBaseRequestHandler from './request/monsterAttackBaseRequest.handler.js';
+import updateBaseHPNotificationHandler from './notification/updateBaseHPNotification.handler.js';
+import { PacketType } from '../constants/PacketTypes.js';
 
 const handlers = {
-  [HANDLER_IDS.REGISTER_REQUEST]: {
-    handler: () => {},
-    prototype: 'gamePacket.C2SRegisterRequest',
-  },
-  [HANDLER_IDS.LOGIN_REQUEST]: {
-    handler: () => {},
-    prototype: 'gamePacket.C2SLoginRequest',
-  },
-  [HANDLER_IDS.MATCH_REQUEST]: {
-    handler: () => {},
-    prototype: 'gamePacket.C2SMatchRequest',
-  },
-  [HANDLER_IDS.MATCH_START_NOTIFICATION]: {
-    handler: () => {},
-    prototype: 'gamePacket.S2CMatchStartNotification',
-  },
   [PacketType.REGISTER_REQUEST]: {
     handler: userRegisterHandler,
     prototype: 'gamePacket.C2SRegisterRequest',
@@ -33,38 +25,38 @@ const handlers = {
     handler: endGameHandler,
     prototype: 'gamePacket.S2CMatchStartNotification',
   },
-  [HANDLER_IDS.SPAWN_MONSTER_REQUEST]: {
+  [PacketType.SPAWN_MONSTER_REQUEST]: {
     handler: spawnMonsterRequestHandler,
     protoType: 'request.C2SSpawnMonsterRequest',
   },
-  [HANDLER_IDS.SPAWN_MONSTER_RESPONSE]: {
+  [PacketType.SPAWN_MONSTER_RESPONSE]: {
     handler: spawnMonsterResponseHandler,
     protoType: 'response.S2CSpawnMonsterResponse',
   },
-  [HANDLER_IDS.SPAWN_ENEMY_MONSTER_NOTIFICATION]: {
+  [PacketType.SPAWN_ENEMY_MONSTER_NOTIFICATION]: {
     handler: spawnEnemyMonsterNotificationHandler,
     protoType: 'notification.S2CSpawnEnemyMonsterNotification',
   },
-  [HANDLER_IDS.MONSTER_ATTACK_BASE_REQUEST]: {
+  [PacketType.MONSTER_ATTACK_BASE_REQUEST]: {
     handler: monsterAttackBaseRequestHandler,
     protoType: 'request.C2SMonsterAttackBaseRequest',
   },
-  [HANDLER_IDS.UPDATE_BASE_HP_NOTIFICATION]: {
+  [PacketType.UPDATE_BASE_HP_NOTIFICATION]: {
     handler: updateBaseHPNotificationHandler,
     protoType: 'notification.S2CUpdateBaseHPNotification',
   },
 };
 
-export const getHandlerById = (handlerId) => {
-  if (!handlers[handlerId]) {
-    throw new Error(`Handler ID ${handlerId} not found`);
+export const getHandlerByPacketType = (packetType) => {
+  if (!handlers[packetType]) {
+    throw new Error(`핸들러를 찾을 수 없습니다: ID ${packetType}`);
   }
-  return handlers[handlerId].handler;
+  return handlers[packetType].handler;
 };
 
-export const getProtoTypeNameByHandlerId = (handlerId) => {
-  if (!handlers[handlerId]) {
-    throw new Error(`Handler ID ${handlerId} not found`);
+export const getProtoTypeNameByPacketType = (packetType) => {
+  if (!handlers[packetType]) {
+    throw new Error(`핸들러를 찾을 수 없습니다: ID ${packetType}`);
   }
-  return handlers[handlerId].protoType;
+  return handlers[packetType].prototype;
 };
