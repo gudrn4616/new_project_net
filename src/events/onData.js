@@ -17,53 +17,38 @@ export const onData = (socket) => (data) => {
 
     // 패킷 타입 읽기 (2바이트)
     const packetType = socket.buffer.readUInt16BE(0);
-    console.log(packetType);
 
     // 버전 길이 읽기 (1바이트)
     const versionLength = socket.buffer.readUInt8(config.packet.header.packetType);
-    console.log(versionLength);
 
     // 버전 문자열 읽기
-    const version = socket.buffer.toString(
-      'utf8',
-      config.packet.header.packetType + config.packet.header.versionLength,
-      config.packet.header.packetType + config.packet.header.versionLength + versionLength,
-    );
-    console.log(version);
+    const versionStart = config.packet.header.packetType + config.packet.header.versionLength;
+    const versionEnd = versionStart + versionLength;
+    const version = socket.buffer.toString('utf8', versionStart, versionEnd);
     if (version !== config.client.version) {
       throw new Error('Invalid version');
     }
 
     // 시퀀스 번호 읽기 (4바이트)
-    const sequence = socket.buffer.readUInt32BE(
-      config.packet.header.packetType + config.packet.header.versionLength + versionLength,
-    );
-    console.log(sequence);
+    const sequence = socket.buffer.readUInt32BE(versionEnd);
 
     // 페이로드 길이 읽기 (4바이트)
-    const payloadLength = socket.buffer.readUInt32BE(
-      config.packet.header.packetType +
-        config.packet.header.versionLength +
-        versionLength +
-        config.packet.header.sequence,
-    );
-    console.log(payloadLength);
+    const payloadLengthStart = versionEnd + config.packet.header.sequence;
+    const payloadLength = socket.buffer.readUInt32BE(payloadLengthStart);
 
     if (socket.buffer.length >= totalHeaderLength + payloadLength) {
       const packetStartIndex = totalHeaderLength + versionLength;
       const gamePacket = socket.buffer.subarray(packetStartIndex, packetStartIndex + payloadLength);
       socket.buffer = socket.buffer.subarray(packetStartIndex + payloadLength);
 
-      console.log('Buffer:', gamePacket);
-
       try {
         const protoTypeName = getProtoTypeNameByHandlerId(packetType);
         const [namespace, typeName] = protoTypeName.split('.');
-        // payload 추출 하기 위해 gamepacket으로 디코딩
+        // payload  추출 하기 위해 gamepacket으로 디코딩
         const decodedMessage = decodedPacket['gamePacket']['GamePacket'].decode(gamePacket);
         console.log('Decoded Packet:', decodedMessage);
         let payload;
-        for (const [key, value] of Object.entries(decodedMessage)) {
+        for (const value of Object.values(decodedMessage)) {
           payload = value;
         }
         const expectedFields = Object.keys(decodedPacket[namespace][typeName].fields);
