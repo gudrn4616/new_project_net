@@ -8,7 +8,6 @@ const createHeader = (payloadLength, packetType, sequence) => {
     payloadLength: PAYLOAD_LENGTH_SIZE,
   } = config.packet.header;
 
-  // Check CLIENT_VERSION in createHeader
   console.log('CLIENT_VERSION in createHeader:', config.client.version);
 
   if (!config.client.version) {

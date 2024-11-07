@@ -10,9 +10,6 @@ import {
 } from '../constants/env.js';
 import { PACKET_HEADER_SIZES } from '../constants/header.js';
 
-// Log CLIENT_VERSION to ensure it's received properly
-console.log('CLIENT_VERSION in config:', CLIENT_VERSION);
-
 export const config = {
   server: {
     port: PORT,

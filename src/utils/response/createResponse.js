@@ -2,7 +2,6 @@ import { getProtoMessages } from '../../init/loadProtos.js';
 import createHeader from '../createHeader.js';
 
 const createResponse = (responsePayload, user, packetType) => {
-  // Check if getProtoMessages returns expected structure
   const decodedPacket = getProtoMessages();
   if (
     !decodedPacket ||
@@ -12,7 +11,6 @@ const createResponse = (responsePayload, user, packetType) => {
     throw new Error('Decoded packet structure is invalid');
   }
 
-  // Ensure responsePayload is defined
   if (!responsePayload) {
     throw new Error('Response payload is undefined');
   }
