@@ -1,7 +1,7 @@
 import { getUser } from '../../session/user.session.js';
 import { getGameSession } from '../../session/game.session.js';
 import createResponse from '../../utils/response/createResponse.js';
-import { PacketType } from '../../constants/PacketTypes.js';
+import { PacketType } from '../../constants/packetTypes.js';
 
 // 기지 체력 업데이트 알림 함수
 const notifyBaseHealthUpdate = (currentUser, baseHealth) => {
