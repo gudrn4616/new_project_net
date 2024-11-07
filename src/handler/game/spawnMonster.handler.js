@@ -2,6 +2,7 @@ import { getUser } from '../../session/user.session.js';
 import { getGameSession } from '../../session/game.session.js';
 import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/PacketTypes.js';
+import { addMonster } from '../../session/monster.session.js';
 
 // 몬스터 스폰 알림 함수
 export const notificationMonsterSpawn = (currentUser, monster) => {
@@ -56,6 +57,9 @@ export const monsterSpawnHandler = async (socket, packet) => {
 
     const monster = game.spawnMonster(currentUser, monsterType, monsterLevel);
     console.log(`몬스터 생성 완료 - ID: ${monster.id}, Number: ${monster.number}`);
+
+    // 몬스터 세션에 추가
+    addMonster(socket, monster.id, monster.number, monsterLevel);
 
     const responsePayload = {
       spawnMonsterResponse: {
