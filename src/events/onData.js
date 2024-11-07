@@ -3,10 +3,10 @@ import { getProtoMessages } from '../init/loadProtos.js';
 import { getHandlerById, getProtoTypeNameByHandlerId } from '../handler/index.js';
 import { PacketType } from '../constants/header.js';
 import userRegisterHandler from '../handler/user/userRegister.handler.js';
-import userLoginhandler from '../handler/user/userLogin.handler.js'
+import userLoginhandler from '../handler/user/userLogin.handler.js';
 export const onData = (socket) => (data) => {
   socket.buffer = Buffer.concat([socket.buffer, data]);
-
+  let offset = 0;
   // 패킷의 전체 헤더 길이 계산
   const totalHeaderLength =
     config.packet.header.packetType +
@@ -19,51 +19,36 @@ export const onData = (socket) => (data) => {
 
     // 패킷 타입 읽기 (2바이트)
     const packetType = socket.buffer.readUInt16BE(0);
-    console.log(packetType);
+    offset += config.packet.header.packetType;
 
     // 버전 길이 읽기 (1바이트)
-    const versionLength = socket.buffer.readUInt8(config.packet.header.packetType);
-    console.log(versionLength);
+    const versionLength = socket.buffer.readUInt8(offset);
+    offset += config.packet.header.versionLength;
 
     // 버전 문자열 읽기
-    const version = socket.buffer.toString(
-      'utf8',
-      config.packet.header.packetType + config.packet.header.versionLength,
-      config.packet.header.packetType + config.packet.header.versionLength + versionLength,
-    );
-    console.log(version);
+    const version = socket.buffer.toString('utf8', offset, offset + versionLength);
+    offset += versionLength;
+
     if (version !== config.client.version) {
       throw new Error('Invalid version');
     }
 
     // 시퀀스 번호 읽기 (4바이트)
-    const sequence = socket.buffer.readUInt32BE(
-      config.packet.header.packetType + config.packet.header.versionLength + versionLength,
-    );
-    console.log(sequence);
+    const sequence = socket.buffer.readUInt32BE(offset);
+    offset += config.packet.header.sequence;
 
     // 페이로드 길이 읽기 (4바이트)
-    const payloadLength = socket.buffer.readUInt32BE(
-      config.packet.header.packetType +
-        config.packet.header.versionLength +
-        versionLength +
-        config.packet.header.sequence,
-    );
-    console.log(payloadLength);
-
-    if (socket.buffer.length >= totalHeaderLength + payloadLength) {
-      const packetStartIndex = totalHeaderLength + versionLength;
-      const gamePacket = socket.buffer.subarray(packetStartIndex, packetStartIndex + payloadLength);
-      socket.buffer = socket.buffer.subarray(packetStartIndex + payloadLength);
-
-      console.log('Buffer:', gamePacket);
+    const payloadLength = socket.buffer.readUInt32BE(offset);
+    offset += config.packet.header.payloadLength;
+    if (socket.buffer.length >= offset + payloadLength) {
+      const gamePacket = socket.buffer.subarray(offset, offset + payloadLength);
+      socket.buffer = socket.buffer.subarray(offset + payloadLength);
 
       try {
         const protoTypeName = getProtoTypeNameByHandlerId(packetType);
         const [namespace, typeName] = protoTypeName.split('.');
         // payload 추출 하기 위해 gamepacket으로 디코딩
         const decodedMessage = decodedPacket['gamePacket']['GamePacket'].decode(gamePacket);
-        console.log('Decoded Packet:', decodedMessage);
         let payload;
         for (const [key, value] of Object.entries(decodedMessage)) {
           payload = value;
