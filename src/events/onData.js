@@ -4,6 +4,8 @@ import { getHandlerById, getProtoTypeNameByHandlerId } from '../handler/index.js
 import { PacketType } from '../constants/header.js';
 import userRegisterHandler from '../handler/user/userRegister.handler.js';
 import userLoginhandler from '../handler/user/userLogin.handler.js';
+import { matchHandler, endGameHandler } from '../handler/game/match.handler.js';
+
 export const onData = (socket) => (data) => {
   socket.buffer = Buffer.concat([socket.buffer, data]);
   let offset = 0;
@@ -66,6 +68,12 @@ export const onData = (socket) => (data) => {
             break;
           case PacketType.LOGIN_REQUEST:
             userLoginhandler(socket, payload);
+            break;
+          case PacketType.MATCH_REQUEST:
+            matchHandler(socket, payload);
+            break;
+          case PacketType.GAME_END_REQUEST:
+            endGameHandler(socket, payload);
             break;
         }
       } catch (error) {

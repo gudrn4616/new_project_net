@@ -1,5 +1,4 @@
 import { getUser } from '../../session/user.session.js';
-import { createMatchRequest, createGameEndRequest } from '../../utils/proto/game.match.js';
 import { addGameSession, removeGameSession, getGameSession } from '../../session/game.session.js';
 
 // 매칭 대기열을 저장할 Set
@@ -39,10 +38,15 @@ export const matchHandler = (socket, data) => {
     const game = addGameSession(user1, user2);
     let user1InitialGameState = game.getInitialGameState();
     let user2InitialGameState = game.getInitialGameState();
+    const responsePayload1 = {
+      InitialGameState: user1InitialGameState,
+    };
+    /*
     const user1Packet = createMatchRequest(user1, user1InitialGameState);
     const user2Packet = createMatchRequest(user2, user2InitialGameState);
     user1.socket.write(user1Packet);
     user2.socket.write(user2Packet);
+    */
     return;
   }
 

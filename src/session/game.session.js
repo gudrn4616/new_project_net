@@ -1,16 +1,26 @@
 import Game from '../classes/models/game.class.js';
 import { gameSessions } from './sessions.js';
 
-export const addGameSession = (id) => {
-  const session = new Game(id);
+// 게임 세션 추가
+export const addGameSession = (user1, user2) => {
+  const session = new Game(user1, user2);
   gameSessions.push(session);
   return session;
 };
 
-export const removeGameSession = (id) => {
-  delete gameSessions[0];
+// 게임 세션 제거
+export const removeGameSession = (socket) => {
+  const index = gameSessions.findIndex(
+    (session) => session.users[0].socket === socket || session.users[1].socket === socket,
+  );
+  if (index !== -1) {
+    return gameSessions.splice(index, 1)[0];
+  }
 };
 
-export const getGameSession = (id) => {
-  return gameSessions[0];
+// 게임 세션 조회
+export const getGameSession = (socket) => {
+  return gameSessions.find(
+    (session) => session.users[0].socket === socket || session.users[1].socket === socket,
+  );
 };
