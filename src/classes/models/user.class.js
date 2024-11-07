@@ -1,10 +1,10 @@
 class User {
-  constructor(socket, id, playerId, latency, sequence) {
+  constructor(socket, id, playerId, latency) {
     this.socket = socket;
     this.id = id;
     this.playerId = playerId;
     this.latency = latency;
-    this.sequence = sequence;
+    this.sequence = 0;
   }
 
   getSocket() {
@@ -19,8 +19,8 @@ class User {
     return this.playerId;
   }
 
-  getSequence() {
-    return this.sequence;
+  getNextSequence() {
+    return ++this.sequence;
   }
 }
 

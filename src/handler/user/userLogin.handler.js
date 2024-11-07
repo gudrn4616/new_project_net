@@ -22,8 +22,10 @@ const userLoginHandler = async (socket, payload) => {
             failCode: 3,
           },
         },
+        null,
         PacketType.LOGIN_RESPONSE,
       );
+
       socket.write(errorResponse);
       return;
     }
@@ -40,8 +42,10 @@ const userLoginHandler = async (socket, payload) => {
             failCode: 3,
           },
         },
+        null,
         PacketType.LOGIN_RESPONSE,
       );
+
       socket.write(errorResponse);
       return;
     }
@@ -59,8 +63,10 @@ const userLoginHandler = async (socket, payload) => {
         failCode: 0,
       },
     };
-    addUser(socket, user);
-    const response = createResponse(responsePayload, PacketType.LOGIN_RESPONSE);
+
+    const userSession = await addUser(socket, user);
+
+    const response = createResponse(responsePayload, userSession, PacketType.LOGIN_RESPONSE);
     socket.write(response);
   } catch (err) {
     throw new Error(err);
