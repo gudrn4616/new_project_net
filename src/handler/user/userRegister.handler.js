@@ -1,14 +1,12 @@
 import { createUser, findUserById } from '../../db/user/user.db.js';
 import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/PacketTypes.js';
+import joiUtils from '../../utils/joi/joi.js';
 
 // TODO: email 검증, id 길이 검증, password 암호화
 const userRegisterHandler = async (socket, payload) => {
   try {
-    const email = payload.email;
-    const id = payload.id;
-    const password = payload.password;
-
+    const { email, id, password } = await joiUtils.validateRegister(payload);
     console.log(`Payload received - email: ${email}, id: ${id}, password: ${password}`);
 
     const user = await findUserById(id);
