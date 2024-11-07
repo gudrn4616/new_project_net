@@ -1,3 +1,8 @@
 export const RESPONSE_SUCCESS_CODE = 0;
 
-export const HANDLER_IDS = {};
+export const HANDLER_IDS = {
+  REGISTER_REQUEST: 0,
+  REGISTER_RESPONSE: 1,
+  LOGIN_REQUEST: 2,
+  LOGIN_RESPONSE: 3,
+};

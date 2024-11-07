@@ -8,6 +8,7 @@ import {
   DB_PASSWORD,
   DB_NAME,
 } from '../constants/env.js';
+import { HANDLER_IDS } from '../constants/handlerIds.js';
 import { PACKET_HEADER_SIZES } from '../constants/header.js';
 
 export const config = {
@@ -17,21 +18,25 @@ export const config = {
     clientVersion: CLIENT_VERSION,
   },
   db: {
+    database: DB_NAME,
     host: DB_HOST,
     port: DB_PORT,
     user: DB_USER,
     password: DB_PASSWORD,
-    database: DB_NAME,
   },
   client: {
     version: CLIENT_VERSION,
   },
   packet: {
     header: {
-      packetType: PACKET_HEADER_SIZES.PACKET_TYPE,
+      packetTypeLength: PACKET_HEADER_SIZES.PACKET_TYPE,
       versionLength: PACKET_HEADER_SIZES.VERSION_LENGTH,
       sequence: PACKET_HEADER_SIZES.SEQUENCE,
       payloadLength: PACKET_HEADER_SIZES.PAYLOAD_LENGTH,
     },
+  },
+  handlerIds: {
+    register: HANDLER_IDS.REGISTER,
+    login: HANDLER_IDS.LOGIN,
   },
 };
