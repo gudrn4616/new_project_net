@@ -10,7 +10,7 @@ const makeNotification = (message, packetType, sequence) => {
 
 export const createSpawnMonsterPacket = (payload) => {
   const protoMessages = getProtoMessages();
-  const response = protoMessages.gamepacket.GamePacket;
+  const response = protoMessages.gamePacket.GamePacket;
 
   const responsePacket = response.encode({ spawnMonsterResponse: payload }).finish();
 
@@ -19,7 +19,7 @@ export const createSpawnMonsterPacket = (payload) => {
 
 export const createSpawnEnemyMonsterPacket = (payload) => {
   const protoMessages = getProtoMessages();
-  const response = protoMessages.gamepacket.GamePacket;
+  const response = protoMessages.gamePacket.GamePacket;
 
   const responsePacket = response.encode({ spawnEnemyMonsterNotification: payload }).finish();
 
