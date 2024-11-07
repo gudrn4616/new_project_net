@@ -6,7 +6,6 @@ import joiUtils from '../../utils/joi/joi.js';
 // TODO: email 검증, id 길이 검증, password 암호화
 const userRegisterHandler = async (socket, payload) => {
   try {
-    console.log('payload: ', payload);
     const { email, id, password } = await joiUtils.validateRegister(payload);
     console.log(`Payload received - email: ${email}, id: ${id}, password: ${password}`);
 
