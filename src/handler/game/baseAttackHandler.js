@@ -14,7 +14,7 @@ const notifyBaseHealthUpdate = (currentUser, baseHealth) => {
   const response = createResponse(
     responsePayload,
     currentUser,
-    PacketType.S2CUpdateBaseHPNotification,
+    PacketType.UPDATE_BASE_HP_NOTIFICATION,
   );
 
   console.log(`기지 체력 업데이트 알림 패킷 전송: ${response}`);
@@ -39,6 +39,7 @@ export const monsterAttackBaseHandler = async (socket, packet) => {
       return;
     }
 
+    // 수정 필요
     const { monsterId, damage } = packet.payload || {};
     const base = game.getBase();
 
