@@ -1,7 +1,7 @@
 import userRegisterHandler from './user/userRegister.handler.js';
 import userLoginHandler from './user/userLogin.handler.js';
 import { endGameHandler, matchHandler } from './game/match.handler.js';
-import { PacketType } from '../constants/PacketTypes.js';
+import { PacketType } from '../constants/packetTypes.js';
 import { monsterSpawnHandler, notificationMonsterSpawn } from './game/spawnMonster.handler.js';
 
 const handlers = {
@@ -17,17 +17,14 @@ const handlers = {
     handler: matchHandler,
     prototype: 'gamePacket.C2SMatchRequest',
   },
+  /*
   [PacketType.MATCH_START_NOTIFICATION]: {
     handler: endGameHandler,
     prototype: 'gamePacket.S2CMatchStartNotification',
-  },
+  },*/
   [PacketType.SPAWN_MONSTER_REQUEST]: {
     handler: monsterSpawnHandler,
     prototype: 'gamePacket.C2SSpawnMonsterRequest',
-  },
-  [PacketType.SPAWN_ENEMY_MONSTER_NOTIFICATION]: {
-    handler: notificationMonsterSpawn,
-    prototype: 'gamePacket.S2CSpawnEnemyMonsterNotification',
   },
 };
 
