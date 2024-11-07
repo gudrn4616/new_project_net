@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import createResponse from '../../utils/response/createResponse.js';
-import { PacketType } from '../../constants/header.js';
+import { PacketType } from '../../constants/PacketTypes.js';
 import { findUserById } from '../../db/user/user.db.js';
 import bcrypt from 'bcrypt';
 const userLoginHandler = async (socket, payload) => {
@@ -9,7 +9,7 @@ const userLoginHandler = async (socket, payload) => {
     const password = payload.password;
     const user = await findUserById(id);
 
-    console.log("login user:",user)
+    console.log('login user:', user);
     if (!user) {
       console.error(`${id} 유저가 존재하지 않습니다.`);
       const errorResponse = createResponse(

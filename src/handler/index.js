@@ -1,34 +1,36 @@
-import { HANDLER_IDS } from '../constants/handlerIds.js';
+import userRegisterHandler from './user/userRegister.handler.js';
+import userLoginHandler from './user/userLogin.handler.js';
+import { PacketType } from '../constants/PacketTypes.js';
 
 const handlers = {
-  [HANDLER_IDS.REGISTER_REQUEST]: {
-    handler: () => {},
+  [PacketType.REGISTER_REQUEST]: {
+    handler: userRegisterHandler,
     prototype: 'gamePacket.C2SRegisterRequest',
   },
-  [HANDLER_IDS.LOGIN_REQUEST]: {
-    handler: () => {},
+  [PacketType.LOGIN_REQUEST]: {
+    handler: userLoginHandler,
     prototype: 'gamePacket.C2SLoginRequest',
   },
-  [HANDLER_IDS.MATCH_REQUEST]: {
+  [PacketType.MATCH_REQUEST]: {
     handler: () => {},
     prototype: 'gamePacket.C2SMatchRequest',
   },
-  [HANDLER_IDS.MATCH_START_NOTIFICATION]: {
+  [PacketType.MATCH_START_NOTIFICATION]: {
     handler: () => {},
     prototype: 'gamePacket.S2CMatchStartNotification',
   },
 };
 
-export const getHandlerById = (handlerId) => {
-  if (!handlers[handlerId]) {
-    throw new Error(`핸들러를 찾을 수 없습니다: ID ${handlerId}`);
+export const getHandlerByPacketType = (packetType) => {
+  if (!handlers[packetType]) {
+    throw new Error(`핸들러를 찾을 수 없습니다: ID ${packetType}`);
   }
-  return handlers[handlerId].handler;
+  return handlers[packetType].handler;
 };
 
-export const getProtoTypeNameByHandlerId = (handlerId) => {
-  if (!handlers[handlerId]) {
-    throw new Error(`핸들러를 찾을 수 없습니다: ID ${handlerId}`);
+export const getProtoTypeNameByPacketType = (packetType) => {
+  if (!handlers[packetType]) {
+    throw new Error(`핸들러를 찾을 수 없습니다: ID ${packetType}`);
   }
-  return handlers[handlerId].prototype;
+  return handlers[packetType].prototype;
 };
