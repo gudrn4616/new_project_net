@@ -38,6 +38,7 @@ const makePacket = (message, type) => {
   return Buffer.concat([buffer, message]);
 };
 
+//수정할 부분들임
 export const createMatchRequest = (socket, data) => {
   const protoMessages = getProtoMessages();
   const matchStartNotification = protoMessages.S2CMatchStartNotification;
@@ -50,7 +51,7 @@ export const createMatchRequest = (socket, data) => {
   const matchStartPacket = matchStartNotification.encode(message).finish();
   return makePacket(matchStartPacket, PacketType.MATCH_START_NOTIFICATION);
 };
-
+//수정할 부분들임
 export const createGameEndRequest = (socket, data) => {
   const protoMessages = getProtoMessages();
   const gameEndNotification = protoMessages.S2CGameEndNotification;
