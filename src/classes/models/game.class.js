@@ -86,5 +86,3 @@ class Game {
 }
 
 export default Game;
-
-// 푸시 테스트
