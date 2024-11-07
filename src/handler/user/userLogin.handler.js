@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/header.js';
 import { findUserById } from '../../db/user/user.db.js';
-
+import bcrypt from 'bcrypt';
 const userLoginHandler = async (socket, payload) => {
   try {
     const id = payload.id;
@@ -28,7 +28,7 @@ const userLoginHandler = async (socket, payload) => {
     }
 
     //todo: 암복호화 비교로 변경
-    if (user.password !== password) {
+    if (!(await bcrypt.compare(password, user.password))) {
       console.error(`${socket}: 비밀번호가 틀렸습니다.`);
       const errorResponse = createResponse(
         {

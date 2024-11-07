@@ -9,6 +9,7 @@
     "dev": "nodemon src/server.js"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
