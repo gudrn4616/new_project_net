@@ -67,6 +67,22 @@ class Game {
       monsterSpawnInterval: this.monsterSpawnInterval,
     };
   }
+
+  spawnMonster(player) {
+    const socket = player.socket;
+    const monsterId = Date.now();
+    const monsterNumber = Math.floor(Math.random() * 5) + 1;
+
+    const monster = {
+      id: monsterId,
+      number: monsterNumber,
+    };
+
+    this.monsters[socket].push(monster);
+    console.log(`몬스터가 생성되었습니다. ID: ${monsterId}, Number: ${monsterNumber}`);
+
+    return monster;
+  }
 }
 
 export default Game;
