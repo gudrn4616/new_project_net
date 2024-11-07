@@ -1,14 +1,12 @@
 import { createUser, findUserById } from '../../db/user/user.db.js';
 import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/header.js';
+import joiUtils from '../../utils/joi/joi.js';
 
 // TODO: email 검증, id 길이 검증, password 암호화
 const userRegisterHandler = async (socket, payload) => {
   try {
-    const email = payload.email;
-    const id = payload.id;
-    const password = payload.password;
-
+    const { email, id, password } = await joiUtils.validateRegister(payload);
     console.log(`Payload received - email: ${email}, id: ${id}, password: ${password}`);
 
     const user = await findUserById(id);
@@ -49,8 +47,21 @@ const userRegisterHandler = async (socket, payload) => {
 
     socket.write(response);
   } catch (err) {
-    console.error(err); // Error 로그 추가
-    throw new Error(err);
+    console.error('error 이유:', err);
+
+    // 실패 응답
+    const errorResponse = createResponse(
+      {
+        registerResponse: {
+          success: false,
+          message: 'register fail',
+          failCode: 3,
+        },
+      },
+      PacketType.REGISTER_RESPONSE,
+    );
+
+    socket.write(errorResponse);
   }
 };
 
