@@ -6,13 +6,19 @@ const createHeader = (payloadLength, packetType, sequence) => {
     versionLength: VERSION_LENGTH_SIZE,
     sequence: SEQUENCE_SIZE,
     payloadLength: PAYLOAD_LENGTH_SIZE,
-    } = config.packet.header;
-  const { CLIENT_VERSION } = config.client.version;
+  } = config.packet.header;
+
+  // Check CLIENT_VERSION in createHeader
+  console.log('CLIENT_VERSION in createHeader:', config.client.version);
+
+  if (!config.client.version) {
+    throw new Error('CLIENT_VERSION is undefined');
+  }
 
   const packetTypeBuffer = Buffer.alloc(PACKET_TYPE_SIZE);
   packetTypeBuffer.writeUInt16BE(packetType, 0);
 
-  const versionBuffer = Buffer.from(CLIENT_VERSION);
+  const versionBuffer = Buffer.from(config.client.version);
 
   const versionLengthBuffer = Buffer.alloc(VERSION_LENGTH_SIZE);
   versionLengthBuffer.writeUInt8(versionBuffer.length, 0);

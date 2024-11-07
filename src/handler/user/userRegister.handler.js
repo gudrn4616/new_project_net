@@ -9,7 +9,11 @@ const userRegisterHandler = async (socket, payload) => {
     const id = payload.id;
     const password = payload.password;
 
+    console.log(`Payload received - email: ${email}, id: ${id}, password: ${password}`);
+
     const user = await findUserById(id);
+    console.log(`User found: ${user}`);
+
     if (user) {
       // 회원가입 실패 - ID 중복
       const errorResponse = createResponse(
@@ -22,7 +26,8 @@ const userRegisterHandler = async (socket, payload) => {
         },
         PacketType.REGISTER_RESPONSE,
       );
-      console.log("createResponse 완료")
+      console.log(`Error response created: ${errorResponse}`);
+
       socket.write(errorResponse);
       return;
     }
@@ -40,8 +45,11 @@ const userRegisterHandler = async (socket, payload) => {
     };
 
     const response = createResponse(responsePayload, PacketType.REGISTER_RESPONSE);
+    console.log(`Success response created: ${response}`);
+
     socket.write(response);
   } catch (err) {
+    console.error(err); // Error 로그 추가
     throw new Error(err);
   }
 };
