@@ -1,5 +1,5 @@
 import { getUser } from '../../session/user.session.js';
-import { addGameSession, removeGameSession, getGameSession } from '../../session/game.session.js';
+import { addGameSession } from '../../session/game.session.js';
 import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/PacketTypes.js';
 
@@ -9,6 +9,23 @@ const waitingQueue = new Set();
 const inGameUsers = new Set();
 // 게임 종료 대기열을 저장할 Set
 const endGameQueue = new Set();
+
+const generateBasePosition = () => ({ x: 0, y: 0 });
+
+const generateMonsterPath = () => [
+  { x: 1, y: 2 },
+  { x: 2, y: 3 },
+  { x: 3, y: 4 },
+];
+
+const getInitialGameState = () => ({
+  baseHp: 100,
+  towerCost: 50,
+  initialGold: 200,
+  monsterSpawnInterval: 5,
+  basePosition: generateBasePosition(), // BasePosition 추가
+  monsterPath: generateMonsterPath(),
+});
 
 export const matchHandler = async (socket, data) => {
   // 현재 유저 가져오기
