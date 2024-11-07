@@ -20,10 +20,6 @@ class JoiUtils {
         'string.base': '비밀번호를 제대로 입력해주세요.',
         'any.required': '비밀번호를 입력해주세요.',
       }),
-      passwordConfirm: joi.any().valid(joi.ref('password')).required().messages({
-        'any.only': '비밀번호와 일치하지 않습니다.',
-        'any.required': '비밀번호 확인을 입력해주세요.',
-      }),
     });
 
     const validation = await joiSchema.validateAsync(payload);
