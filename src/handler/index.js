@@ -1,21 +1,34 @@
-import { PacketType } from '../constants/header.js';
-import userLoginHandler from './user/userLogin.handler.js';
-import userRegisterHandler from './user/userRegister.handler.js';
+import { HANDLER_IDS } from '../constants/handlerIds.js';
 
 const handlers = {
-  [PacketType.REGISTER_REQUEST]: {
-    handler: userRegisterHandler,
+  [HANDLER_IDS.REGISTER_REQUEST]: {
+    handler: () => {},
+    prototype: 'gamePacket.C2SRegisterRequest',
   },
-  [PacketType.LOGIN_REQUEST]: {
-    handler: userLoginHandler,
+  [HANDLER_IDS.LOGIN_REQUEST]: {
+    handler: () => {},
+    prototype: 'gamePacket.C2SLoginRequest',
+  },
+  [HANDLER_IDS.MATCH_REQUEST]: {
+    handler: () => {},
+    prototype: 'gamePacket.C2SMatchRequest',
+  },
+  [HANDLER_IDS.MATCH_START_NOTIFICATION]: {
+    handler: () => {},
+    prototype: 'gamePacket.S2CMatchStartNotification',
   },
 };
 
-export const getHandlerByPacketType = (packetType) => {
-
-  if (!handlers[packetType]) {
-    throw new Error();
+export const getHandlerById = (handlerId) => {
+  if (!handlers[handlerId]) {
+    throw new Error(`핸들러를 찾을 수 없습니다: ID ${handlerId}`);
   }
+  return handlers[handlerId].handler;
+};
 
-  return handlers[packetType].handler;
+export const getProtoTypeNameByHandlerId = (handlerId) => {
+  if (!handlers[handlerId]) {
+    throw new Error(`핸들러를 찾을 수 없습니다: ID ${handlerId}`);
+  }
+  return handlers[handlerId].prototype;
 };

@@ -5,12 +5,12 @@ import { PacketType } from '../../constants/header.js';
 // TODO: email 검증, id 길이 검증, password 암호화
 const userRegisterHandler = async (socket, payload) => {
   try {
-    const { id, password, email } = payload.registRequest;
-    console.log("findUserById start id:",id)
+    const email = payload.email;
+    const id = payload.id;
+    const password = payload.password;
+
     const user = await findUserById(id);
-    console.log("findUserById end")
     if (user) {
-      console.log(user);
       // 회원가입 실패 - ID 중복
       const errorResponse = createResponse(
         {
@@ -22,11 +22,12 @@ const userRegisterHandler = async (socket, payload) => {
         },
         PacketType.REGISTER_RESPONSE,
       );
+      console.log("createResponse 완료")
       socket.write(errorResponse);
       return;
     }
 
-    console.log("createUser start")
+    console.log('createUser start');
     await createUser(email, id, password);
     console.log('회원가입 성공');
 

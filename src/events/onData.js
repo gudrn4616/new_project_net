@@ -1,108 +1,97 @@
-import { PACKET_HEADER_SIZES } from '../constants/header.js';
-import { getProtoMessages, loadProtos } from '../init/loadProtos.js';
-import { getHandlerByPacketType } from '../handler/index.js';
+import { config } from '../config/config.js';
+import { getProtoMessages } from '../init/loadProtos.js';
+import { getHandlerById, getProtoTypeNameByHandlerId } from '../handler/index.js';
 import { PacketType } from '../constants/header.js';
 import userRegisterHandler from '../handler/user/userRegister.handler.js';
-
+import userLoginhandler from '../handler/user/userLogin.handler.js'
 export const onData = (socket) => (data) => {
   socket.buffer = Buffer.concat([socket.buffer, data]);
 
-  //헤더 사이즈 정의
-  const headerSize =
-    PACKET_HEADER_SIZES.PACKET_TYPE +
-    PACKET_HEADER_SIZES.VERSION_LENGTH +
-    PACKET_HEADER_SIZES.SEQUENCE +
-    PACKET_HEADER_SIZES.PAYLOAD_LENGTH;
+  // 패킷의 전체 헤더 길이 계산
+  const totalHeaderLength =
+    config.packet.header.packetType +
+    config.packet.header.versionLength +
+    config.packet.header.sequence +
+    config.packet.header.payloadLength;
 
-  //패킷 버퍼 확인
-  while (socket.buffer.length >= headerSize) {
+  while (socket.buffer.length >= totalHeaderLength) {
+    const decodedPacket = getProtoMessages();
+
+    // 패킷 타입 읽기 (2바이트)
     const packetType = socket.buffer.readUInt16BE(0);
-    const versionLength = socket.buffer.readUInt8(PACKET_HEADER_SIZES.PACKET_TYPE);
-    const totalHeaderLength = headerSize + versionLength; //총 헤더길이
+    console.log(packetType);
 
-    // 전체 패킷이 준비될때까지 반복
-    if (socket.buffer.length < totalHeaderLength) {
+    // 버전 길이 읽기 (1바이트)
+    const versionLength = socket.buffer.readUInt8(config.packet.header.packetType);
+    console.log(versionLength);
+
+    // 버전 문자열 읽기
+    const version = socket.buffer.toString(
+      'utf8',
+      config.packet.header.packetType + config.packet.header.versionLength,
+      config.packet.header.packetType + config.packet.header.versionLength + versionLength,
+    );
+    console.log(version);
+    if (version !== config.client.version) {
+      throw new Error('Invalid version');
+    }
+
+    // 시퀀스 번호 읽기 (4바이트)
+    const sequence = socket.buffer.readUInt32BE(
+      config.packet.header.packetType + config.packet.header.versionLength + versionLength,
+    );
+    console.log(sequence);
+
+    // 페이로드 길이 읽기 (4바이트)
+    const payloadLength = socket.buffer.readUInt32BE(
+      config.packet.header.packetType +
+        config.packet.header.versionLength +
+        versionLength +
+        config.packet.header.sequence,
+    );
+    console.log(payloadLength);
+
+    if (socket.buffer.length >= totalHeaderLength + payloadLength) {
+      const packetStartIndex = totalHeaderLength + versionLength;
+      const gamePacket = socket.buffer.subarray(packetStartIndex, packetStartIndex + payloadLength);
+      socket.buffer = socket.buffer.subarray(packetStartIndex + payloadLength);
+
+      console.log('Buffer:', gamePacket);
+
+      try {
+        const protoTypeName = getProtoTypeNameByHandlerId(packetType);
+        const [namespace, typeName] = protoTypeName.split('.');
+        // payload 추출 하기 위해 gamepacket으로 디코딩
+        const decodedMessage = decodedPacket['gamePacket']['GamePacket'].decode(gamePacket);
+        console.log('Decoded Packet:', decodedMessage);
+        let payload;
+        for (const [key, value] of Object.entries(decodedMessage)) {
+          payload = value;
+        }
+        const expectedFields = Object.keys(decodedPacket[namespace][typeName].fields);
+        const actualFields = Object.keys(payload);
+        const missingFields = expectedFields.filter((field) => !actualFields.includes(field));
+        if (missingFields.length > 0) {
+          throw new Error(`Missing fields: ${missingFields.join(', ')}`);
+        }
+
+        switch (packetType) {
+          case PacketType.REGISTER_REQUEST:
+            userRegisterHandler(socket, payload);
+            break;
+          case PacketType.LOGIN_REQUEST:
+            userLoginhandler(socket, payload);
+            break;
+        }
+      } catch (error) {
+        if (error instanceof RangeError) {
+          console.error('RangeError: index out of range', error);
+        } else {
+          console.error('Decoding Error:', error);
+        }
+      }
+    } else {
       break;
     }
-
-    const versionOffset = PACKET_HEADER_SIZES.PACKET_TYPE + PACKET_HEADER_SIZES.VERSION_LENGTH;
-    // TODO: version 검증
-    const version = socket.buffer.toString('utf-8', versionOffset, versionOffset + versionLength);
-
-    const sequenceOffset = versionOffset + versionLength;
-    const sequence = socket.buffer.readUInt32BE(sequenceOffset);
-
-    const payloadLengthOffset = sequenceOffset + PACKET_HEADER_SIZES.SEQUENCE;
-    const payloadLength = socket.buffer.readUInt32BE(payloadLengthOffset);
-
-    // 패킷 전체 길이
-    const packetLength = totalHeaderLength + payloadLength;
-
-    // 버퍼 길이가 패킷 길이보다 짧다면 데이터를 모두 수신할떄까지 while 반복
-    if (socket.buffer.length < packetLength) {
-      break;
-    }
-
-    // 실제 데이터
-    const payload = socket.buffer.slice(totalHeaderLength, packetLength);
-    // 만약 남은 데이터가 있다면 버퍼에 다시 넣어주는 코드
-    socket.buffer = socket.buffer.slice(packetLength);
-
-    
-    console.log({ packetType, version, sequence, payloadLength, payload });
-
-    try {
-      
-      const decodedPacket = getProtoMessages();
-      let test1 = decodedPacket.registerRequest.packetHeader.decode(payload)
-      let test2= decodedPacket['registerRequest']['packetHeader'].decode(payload)
-      console.log("test2:",test2)
-      console.log("test1:",test1)
-
-      
-      // const handler = getHandlerByPacketType(packetType);
-      // if (handler) {
-      //   handler(socket, decodedPacket);
-      // }
-
-      // switch (packetType) {
-      //   case PacketType.REGISTER_REQUEST:
-      //     await userRegisterHandler(socket, decodedPacket.registerRequest);
-      //     break;
-      //   case PacketType.LOGIN_REQUEST:
-      //     await userLoginhandler(socket, decodedPacket.loginRequest);
-      //     break;
-      // }
-    } catch (err) {
-      console.error('패킷 처리 에러:', err);
-    }
-  }
-};
-
-
-const decodePayload = async (payload, namespace, type) => {
-  try {
-    // 프로토 메시지를 로드합니다.
-    
-    const protoMessages = getProtoMessages();
-
-    // 네임스페이스와 메시지 타입을 찾습니다.
-    const MessageType = protoMessages[namespace]?.[type];
-    if (!MessageType) {
-      throw new Error(`Message type ${namespace}.${type}을 찾을 수 없습니다.`);
-    }
-
-    // payload를 디코딩합니다.
-    const decodedMessage = MessageType.decode(payload);
-
-    // 각 필드의 값 확인
-    const { id, password, email } = decodedMessage;
-    console.log("ID:", id);
-    console.log("Password:", password);
-    console.log("Email:", email);
-
-    return { id, password, email };
-  } catch (error) {
-    console.error('Payload 디코딩 중 오류가 발생했습니다:', error);
   }
 };
