@@ -11,7 +11,7 @@ export const createUser = async (email, id, password) => {
 export const findUserById = async (id) => {
   try {
     const [rows] = await pools.USER_DB.query(SQL_QUERIES.FIND_USER_BY_ID, [id]);
-    console.log("rows:",rows[0])
+
     return rows[0];
   } catch (e) {
     console.error(e);
