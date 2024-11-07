@@ -23,8 +23,10 @@ const createResponse = (responsePayload, user, packetType) => {
     throw new Error('Packet type is undefined');
   }
 
-  const header = createHeader(payloadBuffer.length, packetType, user?.getNextSequence() || 0);
-  console.log('sequence: ', user.getNextSequence());
+  const sequence = user ? user.getNextSequence() : 0;
+
+  const header = createHeader(payloadBuffer.length, packetType, sequence);
+  if (!user) console.log('sequence: ', sequence);
 
   console.log('header:', header);
   return Buffer.concat([header, payloadBuffer]);

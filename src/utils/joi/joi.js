@@ -32,4 +32,5 @@ class JoiUtils {
   }
 }
 
-export default joiUtils = new JoiUtils();
+const joiUtils = new JoiUtils();
+export default joiUtils;
