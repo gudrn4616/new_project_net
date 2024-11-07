@@ -1,6 +1,6 @@
 import pools from '../database.js';
 import { SQL_QUERIES } from './user.query.js';
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 //유저 생성
 export const createUser = async (email, id, password) => {
   const hashedPassword = await bcrypt.hash(password, 10); //패스워드 암호화

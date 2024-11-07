@@ -24,32 +24,3 @@ export const getGameSession = (socket) => {
     (session) => session.users[0].socket === socket || session.users[1].socket === socket,
   );
 };
-
-// 게임 세션에 몬스터 추가
-export const addMonsterToSession = (socket, monster) => {
-  const session = getGameSession(socket);
-  if (session) {
-    session.monsters.push(monster);
-  }
-};
-
-// 게임 세션에서 몬스터 삭제
-export const removeMonsterFromSession = (socket, monsterId) => {
-  const session = getGameSession(socket);
-  if (session) {
-    const index = session.monsters.findIndex((monster) => monster.id === monsterId);
-    if (index !== -1) {
-      return session.monsters.splice(index, 1)[0];
-    }
-  }
-};
-
-// 기지 체력 감소
-export const reduceBaseHealthInSession = (socket, damage) => {
-  const session = getGameSession(socket);
-  if (session) {
-    session.reduceBaseHealth(damage);
-    return session.getBaseHealth();
-  }
-  return null;
-};

@@ -2,7 +2,6 @@ import net from 'net';
 import { config } from './config/config.js';
 import { onConnections } from './events/onConnections.js';
 import initServer from './init/index.js';
-
 const server = net.createServer(onConnections);
 
 initServer()

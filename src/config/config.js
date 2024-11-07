@@ -8,7 +8,6 @@ import {
   HOST,
   PORT,
 } from '../constants/env.js';
-
 import { PACKET_HEADER_SIZES } from '../constants/header.js';
 
 // Log CLIENT_VERSION to ensure it's received properly

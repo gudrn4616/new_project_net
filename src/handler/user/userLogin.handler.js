@@ -4,7 +4,6 @@ import { PacketType } from '../../constants/PacketTypes.js';
 import { findUserById } from '../../db/user/user.db.js';
 import bcrypt from 'bcrypt';
 import { addUser } from '../../session/user.session.js';
-
 const userLoginHandler = async (socket, payload) => {
   try {
     const id = payload.id;
@@ -23,8 +22,10 @@ const userLoginHandler = async (socket, payload) => {
             failCode: 3,
           },
         },
+        null,
         PacketType.LOGIN_RESPONSE,
       );
+
       socket.write(errorResponse);
       return;
     }
@@ -41,8 +42,10 @@ const userLoginHandler = async (socket, payload) => {
             failCode: 3,
           },
         },
+        null,
         PacketType.LOGIN_RESPONSE,
       );
+
       socket.write(errorResponse);
       return;
     }
@@ -60,8 +63,10 @@ const userLoginHandler = async (socket, payload) => {
         failCode: 0,
       },
     };
-    addUser(socket, user);
-    const response = createResponse(responsePayload, PacketType.LOGIN_RESPONSE);
+
+    const userSession = await addUser(socket, user);
+
+    const response = createResponse(responsePayload, userSession, PacketType.LOGIN_RESPONSE);
     socket.write(response);
   } catch (err) {
     throw new Error(err);

@@ -1,11 +1,6 @@
 import userRegisterHandler from './user/userRegister.handler.js';
 import userLoginHandler from './user/userLogin.handler.js';
-import { endGameHandler, matchHandler } from './game/match.handler.js';
-import spawnMonsterRequestHandler from './request/spawnMonsterRequest.handler.js';
-import spawnMonsterResponseHandler from './response/spawnMonsterResponse.handler.js';
-import spawnEnemyMonsterNotificationHandler from './notification/spawnEnemyMonsterNotification.handler.js';
-import monsterAttackBaseRequestHandler from './request/monsterAttackBaseRequest.handler.js';
-import updateBaseHPNotificationHandler from './notification/updateBaseHPNotification.handler.js';
+import { matchHandler, endGameHandler } from './game/match.handler.js';
 import { PacketType } from '../constants/PacketTypes.js';
 
 const handlers = {
@@ -24,26 +19,6 @@ const handlers = {
   [PacketType.MATCH_START_NOTIFICATION]: {
     handler: endGameHandler,
     prototype: 'gamePacket.S2CMatchStartNotification',
-  },
-  [PacketType.SPAWN_MONSTER_REQUEST]: {
-    handler: spawnMonsterRequestHandler,
-    protoType: 'request.C2SSpawnMonsterRequest',
-  },
-  [PacketType.SPAWN_MONSTER_RESPONSE]: {
-    handler: spawnMonsterResponseHandler,
-    protoType: 'response.S2CSpawnMonsterResponse',
-  },
-  [PacketType.SPAWN_ENEMY_MONSTER_NOTIFICATION]: {
-    handler: spawnEnemyMonsterNotificationHandler,
-    protoType: 'notification.S2CSpawnEnemyMonsterNotification',
-  },
-  [PacketType.MONSTER_ATTACK_BASE_REQUEST]: {
-    handler: monsterAttackBaseRequestHandler,
-    protoType: 'request.C2SMonsterAttackBaseRequest',
-  },
-  [PacketType.UPDATE_BASE_HP_NOTIFICATION]: {
-    handler: updateBaseHPNotificationHandler,
-    protoType: 'notification.S2CUpdateBaseHPNotification',
   },
 };
 

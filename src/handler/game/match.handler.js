@@ -1,7 +1,8 @@
 import { getUser } from '../../session/user.session.js';
-import { addGameSession, getGameSession, removeGameSession } from '../../session/game.session.js';
+import { addGameSession, removeGameSession, getGameSession } from '../../session/game.session.js';
 import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/PacketTypes.js';
+
 // 매칭 대기열을 저장할 Set
 const waitingQueue = new Set();
 // 게임 중인 유저를 저장할 Set
@@ -40,6 +41,7 @@ export const matchHandler = async (socket, data) => {
     const game = addGameSession(user1, user2);
     let user1InitialGameState = game.getInitialGameState();
     let user2InitialGameState = game.getInitialGameState();
+
     const responsePayload1 = {
       matchStartNotification: {
         initialGameState: user1InitialGameState,
@@ -47,6 +49,7 @@ export const matchHandler = async (socket, data) => {
         opponentData: user2InitialGameState,
       },
     };
+
     const responsePayload2 = {
       matchStartNotification: {
         initialGameState: user2InitialGameState,
@@ -54,8 +57,9 @@ export const matchHandler = async (socket, data) => {
         opponentData: user1InitialGameState,
       },
     };
-    const response1 = createResponse(responsePayload1, PacketType.MATCH_START_NOTIFICATION);
-    const response2 = createResponse(responsePayload2, PacketType.MATCH_START_NOTIFICATION);
+
+    const response1 = createResponse(responsePayload1, user1, PacketType.MATCH_START_NOTIFICATION);
+    const response2 = createResponse(responsePayload2, user2, PacketType.MATCH_START_NOTIFICATION);
     user1.socket.write(response1);
     user2.socket.write(response2);
     return;
@@ -66,6 +70,7 @@ export const matchHandler = async (socket, data) => {
 
 // 게임 종료 처리
 export const endGameHandler = (socket) => {
+  /*
   const currentUser = getUser(socket);
   if (!currentUser) {
     return;
@@ -118,4 +123,5 @@ export const endGameHandler = (socket) => {
     currentUser.socket.write(response1);
     opponent.socket.write(response2);
   }
+  */
 };

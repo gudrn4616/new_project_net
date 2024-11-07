@@ -47,16 +47,19 @@ export const onData = (socket) => async (data) => {
         const [namespace, typeName] = protoTypeName.split('.');
         // payload 추출 하기 위해 gamepacket으로 디코딩
         const decodedMessage = decodedPacket['gamePacket']['GamePacket'].decode(gamePacket);
+
         let payload;
         for (const [key, value] of Object.entries(decodedMessage)) {
           payload = value;
         }
+
         const expectedFields = Object.keys(decodedPacket[namespace][typeName].fields);
         const actualFields = Object.keys(payload);
         const missingFields = expectedFields.filter((field) => !actualFields.includes(field));
         if (missingFields.length > 0) {
           throw new Error(`Missing fields: ${missingFields.join(', ')}`);
         }
+
         const handler = getHandlerByPacketType(packetType);
         await handler(socket, payload);
       } catch (error) {

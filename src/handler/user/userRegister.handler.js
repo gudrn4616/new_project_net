@@ -24,6 +24,7 @@ const userRegisterHandler = async (socket, payload) => {
             failCode: 3,
           },
         },
+        null,
         PacketType.REGISTER_RESPONSE,
       );
       console.log(`Error response created: ${errorResponse}`);
@@ -44,7 +45,7 @@ const userRegisterHandler = async (socket, payload) => {
       },
     };
 
-    const response = createResponse(responsePayload, PacketType.REGISTER_RESPONSE);
+    const response = createResponse(responsePayload, null, PacketType.REGISTER_RESPONSE);
     console.log(`Success response created: ${response}`);
 
     socket.write(response);

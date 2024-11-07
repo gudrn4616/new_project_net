@@ -15,8 +15,8 @@ message Packet {
 
   GamePacket gamePacket = 5;  // 게임 패킷
 
-  message GamePacket {// 게임 패킷 래퍼
-    oneof payload {// 패킷 페이로드
+  message GamePacket {                   // 게임 패킷 래퍼
+    oneof payload {                      // 패킷 페이로드
       C2SRegisterRequest registerRequest = 1;
       S2CRegisterResponse registerResponse = 2;
       C2SLoginRequest loginRequest = 3;

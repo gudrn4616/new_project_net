@@ -11,18 +11,16 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
+    "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "long": "^5.2.3",
-    "mysql2": "^3.11.4",
+    "mysql2": "^3.11.3",
     "protobufjs": "^7.4.0",
     "uuid": "^11.0.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.7",
-    "prettier": "^3.3.3",
-    "prettierrc": "^0.0.0-5"
-  },
-  "repository": "https://github.com/gudrn4616/new_project_net.git",
-  "author": "rabbit-97 <uzam97@gmail.com>"
+    "prettier": "^3.3.3"
+  }
 }
