@@ -56,8 +56,8 @@ export const matchHandler = async (socket, data) => {
 
     // 게임 인스턴스 생성
     const game = addGameSession(user1, user2);
-    let user1InitialGameState = game.getInitialGameState();
-    let user2InitialGameState = game.getInitialGameState();
+    let user1InitialGameState = getInitialGameState();
+    let user2InitialGameState = getInitialGameState();
 
     const responsePayload1 = {
       matchStartNotification: {

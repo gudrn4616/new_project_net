@@ -1,8 +1,6 @@
-import { getUser } from '../../session/user.session.js';
 import { getGameSession } from '../../session/game.session.js';
 import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/packetTypes.js';
-import { addMonster } from '../../session/monster.session.js';
 import {
   createSpawnEnemyMonsterPacket,
   createSpawnMonsterPacket,
@@ -46,7 +44,7 @@ export const monsterSpawnHandler = async (socket, payload) => {
       monsterId: cnt++,
       monsterNumber: randomMonsterId,
     };
-
+    //
     Promise.all([
       socket.write(createSpawnMonsterPacket(monsterSpawnResponse)),
       opponent.socket.write(createSpawnEnemyMonsterPacket(monsterSpawnResponse)),
