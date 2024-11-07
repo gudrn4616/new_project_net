@@ -1,6 +1,7 @@
 import { getUser } from '../../session/user.session.js';
 import { addGameSession, removeGameSession, getGameSession } from '../../session/game.session.js';
-
+import createResponse from '../../utils/response/createResponse.js';
+import { PacketType } from '../../constants/header.js';
 // 매칭 대기열을 저장할 Set
 const waitingQueue = new Set();
 // 게임 중인 유저를 저장할 Set
@@ -8,10 +9,12 @@ const inGameUsers = new Set();
 // 게임 종료 대기열을 저장할 Set
 const endGameQueue = new Set();
 
-export const matchHandler = (socket, data) => {
+export const matchHandler = async (socket, data) => {
   // 현재 유저 가져오기
+  console.log('매칭 요청:');
   const currentUser = getUser(socket);
   if (!currentUser) {
+    console.error('유저가 존재하지 않습니다.');
     return;
   }
 
@@ -22,7 +25,6 @@ export const matchHandler = (socket, data) => {
 
   // 현재 유저를 매칭 대기열에 추가
   waitingQueue.add(currentUser);
-
   // 매칭 대기열에 2명 이상이면 게임 매칭 시작
   if (waitingQueue.size >= 2) {
     // 대기열에서 첫 번째 유저와 두 번째 유저를 가져옴
@@ -39,14 +41,23 @@ export const matchHandler = (socket, data) => {
     let user1InitialGameState = game.getInitialGameState();
     let user2InitialGameState = game.getInitialGameState();
     const responsePayload1 = {
-      InitialGameState: user1InitialGameState,
+      matchStartNotification: {
+        initialGameState: user1InitialGameState,
+        playerData: user1InitialGameState,
+        opponentData: user2InitialGameState,
+      },
     };
-    /*
-    const user1Packet = createMatchRequest(user1, user1InitialGameState);
-    const user2Packet = createMatchRequest(user2, user2InitialGameState);
-    user1.socket.write(user1Packet);
-    user2.socket.write(user2Packet);
-    */
+    const responsePayload2 = {
+      matchStartNotification: {
+        initialGameState: user2InitialGameState,
+        playerData: user2InitialGameState,
+        opponentData: user1InitialGameState,
+      },
+    };
+    const response1 = createResponse(responsePayload1, PacketType.MATCH_START_NOTIFICATION);
+    const response2 = createResponse(responsePayload2, PacketType.MATCH_START_NOTIFICATION);
+    user1.socket.write(response1);
+    user2.socket.write(response2);
     return;
   }
 
@@ -92,9 +103,19 @@ export const endGameHandler = (socket) => {
     endGameQueue.delete(opponent);
 
     // 게임 종료 패킷 생성 및 전송
-    const packet = createGameEndRequest(currentUser.socket, { isWin: isCurrentUserWin });
-    const opponentPacket = createGameEndRequest(opponent.socket, { isWin: !isCurrentUserWin });
-    currentUser.socket.write(packet);
-    opponent.socket.write(opponentPacket);
+    const responsePayload1 = {
+      C2SGameEndRequest: {
+        isWin: isCurrentUserWin,
+      },
+    };
+    const responsePayload2 = {
+      C2SGameEndRequest: {
+        isWin: !isCurrentUserWin,
+      },
+    };
+    const response1 = createResponse(responsePayload1, PacketType.C2SGameEndRequest);
+    const response2 = createResponse(responsePayload2, PacketType.C2SGameEndRequest);
+    currentUser.socket.write(response1);
+    opponent.socket.write(response2);
   }
 };

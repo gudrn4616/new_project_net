@@ -18,7 +18,6 @@ const createResponse = (responsePayload, packetType) => {
   }
 
   const payloadBuffer = decodedPacket['gamePacket']['GamePacket'].encode(responsePayload).finish();
-
   // Ensure packetType is defined
   if (typeof packetType === 'undefined') {
     throw new Error('Packet type is undefined');

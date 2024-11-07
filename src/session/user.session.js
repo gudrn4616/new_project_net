@@ -1,6 +1,6 @@
 import { userSessions } from './sessions.js';
 import User from '../classes/models/user.class.js';
-export const addUser = (socket, id, playerId, latency) => {
+export const addUser = (socket, id, playerId, latency, sequence) => {
   const user = new User(socket, id, playerId, latency);
   userSessions.push(user);
   return user;

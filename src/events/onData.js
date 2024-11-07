@@ -61,7 +61,6 @@ export const onData = (socket) => (data) => {
         if (missingFields.length > 0) {
           throw new Error(`Missing fields: ${missingFields.join(', ')}`);
         }
-
         switch (packetType) {
           case PacketType.REGISTER_REQUEST:
             userRegisterHandler(socket, payload);

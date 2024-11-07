@@ -3,13 +3,14 @@ import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/header.js';
 import { findUserById } from '../../db/user/user.db.js';
 import bcrypt from 'bcrypt';
+import { addUser } from '../../session/user.session.js';
 const userLoginHandler = async (socket, payload) => {
   try {
     const id = payload.id;
     const password = payload.password;
     const user = await findUserById(id);
 
-    console.log("login user:",user)
+    console.log('login user:', user);
     if (!user) {
       console.error(`${id} 유저가 존재하지 않습니다.`);
       const errorResponse = createResponse(
@@ -58,7 +59,7 @@ const userLoginHandler = async (socket, payload) => {
         failCode: 0,
       },
     };
-
+    addUser(socket, user);
     const response = createResponse(responsePayload, PacketType.LOGIN_RESPONSE);
     socket.write(response);
   } catch (err) {
