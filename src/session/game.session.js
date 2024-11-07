@@ -1,4 +1,4 @@
-import Game from '../classes/models/game.classes.js';
+import Game from '../classes/models/game.class.js';
 import { gameSessions } from './sessions.js';
 
 // 게임 세션 추가

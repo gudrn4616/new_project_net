@@ -1,95 +1,73 @@
-import { packetParser } from '../utils/parser/packetParser.js';
-import CustomError from '../utils/error/customError.js';
-import { ErrorCodes } from '../utils/error/errorCodes.js';
-import { PACKET_HEADER_SIZES, PacketType } from '../constants/header.js';
-import { getHandlerById, getProtoTypeNameByHandlerId } from '../handler/index.js';
-import protobuf from 'protobufjs';
+import { config } from '../config/config.js';
+import { getProtoMessages } from '../init/loadProtos.js';
+import { getHandlerByPacketType, getProtoTypeNameByPacketType } from '../handler/index.js';
 
-// 각 헤더 크기 상수
-const {
-  PACKET_TYPE: PACKET_TYPE_LENGTH,
-  VERSION_LENGTH,
-  SEQUENCE,
-  PAYLOAD_LENGTH,
-} = PACKET_HEADER_SIZES;
-const TOTAL_HEADER_LENGTH = PACKET_TYPE_LENGTH + VERSION_LENGTH + SEQUENCE + PAYLOAD_LENGTH;
-
-export const onData = (socket) => (data) => {
-  console.log('Received data:', data);
-
+export const onData = (socket) => async (data) => {
   socket.buffer = Buffer.concat([socket.buffer, data]);
-  console.log('Updated socket buffer:', socket.buffer);
+  let offset = 0;
+  // 패킷의 전체 헤더 길이 계산
+  const totalHeaderLength =
+    config.packet.header.packetType +
+    config.packet.header.versionLength +
+    config.packet.header.sequence +
+    config.packet.header.payloadLength;
 
-  while (socket.buffer.length > TOTAL_HEADER_LENGTH) {
+  while (socket.buffer.length >= totalHeaderLength) {
+    const decodedPacket = getProtoMessages();
+
+    // 패킷 타입 읽기 (2바이트)
     const packetType = socket.buffer.readUInt16BE(0);
-    const version = socket.buffer.readUInt8(PACKET_TYPE_LENGTH);
-    const sequence = socket.buffer.readUInt32BE(PACKET_TYPE_LENGTH + VERSION_LENGTH);
-    const payloadLength = socket.buffer.readUInt32BE(
-      PACKET_TYPE_LENGTH + VERSION_LENGTH + SEQUENCE,
-    );
+    offset += config.packet.header.packetType;
 
-    console.log('Packet detected:', { packetType, version, sequence, payloadLength });
+    // 버전 길이 읽기 (1바이트)
+    const versionLength = socket.buffer.readUInt8(offset);
+    offset += config.packet.header.versionLength;
 
-    if (socket.buffer.length >= TOTAL_HEADER_LENGTH + payloadLength) {
-      const packet = socket.buffer.subarray(
-        TOTAL_HEADER_LENGTH,
-        TOTAL_HEADER_LENGTH + payloadLength,
-      );
-      socket.buffer = socket.buffer.subarray(TOTAL_HEADER_LENGTH + payloadLength);
+    // 버전 문자열 읽기
+    const version = socket.buffer.toString('utf8', offset, offset + versionLength);
+    offset += versionLength;
 
-      console.log('Extracted packet:', packet);
+    if (version !== config.client.version) {
+      throw new Error('Invalid version');
+    }
+
+    // 시퀀스 번호 읽기 (4바이트)
+    const sequence = socket.buffer.readUInt32BE(offset);
+    offset += config.packet.header.sequence;
+
+    // 페이로드 길이 읽기 (4바이트)
+    const payloadLength = socket.buffer.readUInt32BE(offset);
+    offset += config.packet.header.payloadLength;
+    if (socket.buffer.length >= offset + payloadLength) {
+      const gamePacket = socket.buffer.subarray(offset, offset + payloadLength);
+      socket.buffer = socket.buffer.subarray(offset + payloadLength);
 
       try {
-        handlePacket(packetType, packet, socket);
+        const protoTypeName = getProtoTypeNameByPacketType(packetType);
+        const [namespace, typeName] = protoTypeName.split('.');
+        // payload 추출 하기 위해 gamepacket으로 디코딩
+        const decodedMessage = decodedPacket['gamePacket']['GamePacket'].decode(gamePacket);
+        let payload;
+        for (const [key, value] of Object.entries(decodedMessage)) {
+          payload = value;
+        }
+        const expectedFields = Object.keys(decodedPacket[namespace][typeName].fields);
+        const actualFields = Object.keys(payload);
+        const missingFields = expectedFields.filter((field) => !actualFields.includes(field));
+        if (missingFields.length > 0) {
+          throw new Error(`Missing fields: ${missingFields.join(', ')}`);
+        }
+        const handler = getHandlerByPacketType(packetType);
+        await handler(socket, payload);
       } catch (error) {
-        console.error(`Packet handling error: ${error.message}`);
-        throw new CustomError(ErrorCodes.PACKET_DECODE_ERROR, error.message);
+        if (error instanceof RangeError) {
+          console.error('RangeError: index out of range', error);
+        } else {
+          console.error('Decoding Error:', error);
+        }
       }
     } else {
-      console.log('Insufficient data for full packet, waiting for more data.');
       break;
     }
   }
-};
-
-const handlePacket = (packetType, packet, socket) => {
-  console.log('Handling packet of type:', packetType);
-
-  try {
-    switch (packetType) {
-      case PacketType.SPAWN_MONSTER_REQUEST:
-      case PacketType.SPAWN_MONSTER_RESPONSE:
-      case PacketType.SPAWN_ENEMY_MONSTER_NOTIFICATION:
-      case PacketType.MONSTER_ATTACK_BASE_REQUEST:
-      case PacketType.UPDATE_BASE_HP_NOTIFICATION:
-        processGamePacket(packet, socket);
-        break;
-      default:
-        throw new CustomError(ErrorCodes.PACKET_DECODE_ERROR, 'packet type is not supported.');
-    }
-  } catch (error) {
-    console.error(`Packet processing error: ${error.message}`);
-    throw error;
-  }
-};
-
-const processGamePacket = (packet, socket) => {
-  const { handlerId, userId, payload } = packetParser(packet);
-  console.log('Parsed packet:', { handlerId, userId, payload });
-
-  const handler = getHandlerById(handlerId);
-  const protoTypeName = getProtoTypeNameByHandlerId(handlerId);
-
-  console.log('Handler and ProtoType:', { handler, protoTypeName });
-
-  if (!handler || !protoTypeName) {
-    const errorMsg = `Handler or proto type not found for handlerId ${handlerId}`;
-    console.error(errorMsg);
-    throw new CustomError(ErrorCodes.PACKET_DECODE_ERROR, errorMsg);
-  }
-
-  const decodedPayload = protobuf.lookupType(protoTypeName).decode(payload);
-  console.log('Decoded payload:', decodedPayload);
-
-  handler({ socket, userId, payload: decodedPayload });
 };

@@ -1,12 +1,38 @@
 import { HANDLER_IDS } from '../constants/handlerIds.js';
-// 기존 핸들러들
-import spawnMonsterRequestHandler from './request/spawnMonsterRequest.handler.js';
-import spawnMonsterResponseHandler from './response/spawnMonsterResponse.handler.js';
-import spawnEnemyMonsterNotificationHandler from './notification/spawnEnemyMonsterNotification.handler.js';
-import monsterAttackBaseRequestHandler from './request/monsterAttackBaseRequest.handler.js';
-import updateBaseHPNotificationHandler from './notification/updateBaseHPNotification.handler.js';
 
 const handlers = {
+  [HANDLER_IDS.REGISTER_REQUEST]: {
+    handler: () => {},
+    prototype: 'gamePacket.C2SRegisterRequest',
+  },
+  [HANDLER_IDS.LOGIN_REQUEST]: {
+    handler: () => {},
+    prototype: 'gamePacket.C2SLoginRequest',
+  },
+  [HANDLER_IDS.MATCH_REQUEST]: {
+    handler: () => {},
+    prototype: 'gamePacket.C2SMatchRequest',
+  },
+  [HANDLER_IDS.MATCH_START_NOTIFICATION]: {
+    handler: () => {},
+    prototype: 'gamePacket.S2CMatchStartNotification',
+  },
+  [PacketType.REGISTER_REQUEST]: {
+    handler: userRegisterHandler,
+    prototype: 'gamePacket.C2SRegisterRequest',
+  },
+  [PacketType.LOGIN_REQUEST]: {
+    handler: userLoginHandler,
+    prototype: 'gamePacket.C2SLoginRequest',
+  },
+  [PacketType.MATCH_REQUEST]: {
+    handler: matchHandler,
+    prototype: 'gamePacket.C2SMatchRequest',
+  },
+  [PacketType.MATCH_START_NOTIFICATION]: {
+    handler: endGameHandler,
+    prototype: 'gamePacket.S2CMatchStartNotification',
+  },
   [HANDLER_IDS.SPAWN_MONSTER_REQUEST]: {
     handler: spawnMonsterRequestHandler,
     protoType: 'request.C2SSpawnMonsterRequest',

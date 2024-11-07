@@ -3,8 +3,6 @@ import initialGameState from './initialGameState.js';
 class Game {
   constructor(user1, user2) {
     this.users = [user1, user2];
-    this.monsters = [];
-    this.baseHealth = initialGameState.baseHp;
 
     this.baseHp = {
       [user1.socket]: initialGameState.baseHp,
@@ -59,34 +57,6 @@ class Game {
       [user1.socket]: 0,
       [user2.socket]: 0,
     };
-  }
-
-  // 몬스터 추가
-  addMonster(monster) {
-    this.monsters.push(monster);
-  }
-
-  // 특정 몬스터 제거
-  removeMonster(monsterId) {
-    const index = this.monsters.findIndex((monster) => monster.id === monsterId);
-    if (index !== -1) {
-      this.monsters.splice(index, 1);
-    }
-  }
-
-  // 모든 몬스터 조회
-  getMonsters() {
-    return this.monsters;
-  }
-
-  // 기지 체력 감소 메서드
-  reduceBaseHealth(amount) {
-    this.baseHealth = Math.max(0, this.baseHealth - amount);
-  }
-
-  // 기지 체력 조회 메서드
-  getBaseHealth() {
-    return this.baseHealth;
   }
 
   getInitialGameState() {
