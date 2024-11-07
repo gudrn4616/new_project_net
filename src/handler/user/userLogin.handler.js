@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import createResponse from '../../utils/response/createResponse.js';
-import { PacketType } from '../../constants/header.js';
+import { PacketType } from '../../constants/PacketTypes.js';
 import { findUserById } from '../../db/user/user.db.js';
 import bcrypt from 'bcrypt';
 import { addUser } from '../../session/user.session.js';

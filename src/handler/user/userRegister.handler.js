@@ -1,6 +1,6 @@
 import { createUser, findUserById } from '../../db/user/user.db.js';
 import createResponse from '../../utils/response/createResponse.js';
-import { PacketType } from '../../constants/header.js';
+import { PacketType } from '../../constants/PacketTypes.js';
 
 // TODO: email 검증, id 길이 검증, password 암호화
 const userRegisterHandler = async (socket, payload) => {

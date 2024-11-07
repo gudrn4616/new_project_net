@@ -1,12 +1,8 @@
 import { config } from '../config/config.js';
 import { getProtoMessages } from '../init/loadProtos.js';
-import { getHandlerById, getProtoTypeNameByHandlerId } from '../handler/index.js';
-import { PacketType } from '../constants/header.js';
-import userRegisterHandler from '../handler/user/userRegister.handler.js';
-import userLoginhandler from '../handler/user/userLogin.handler.js';
-import { matchHandler, endGameHandler } from '../handler/game/match.handler.js';
+import { getHandlerByPacketType, getProtoTypeNameByPacketType } from '../handler/index.js';
 
-export const onData = (socket) => (data) => {
+export const onData = (socket) => async (data) => {
   socket.buffer = Buffer.concat([socket.buffer, data]);
   let offset = 0;
   // 패킷의 전체 헤더 길이 계산
@@ -47,7 +43,7 @@ export const onData = (socket) => (data) => {
       socket.buffer = socket.buffer.subarray(offset + payloadLength);
 
       try {
-        const protoTypeName = getProtoTypeNameByHandlerId(packetType);
+        const protoTypeName = getProtoTypeNameByPacketType(packetType);
         const [namespace, typeName] = protoTypeName.split('.');
         // payload 추출 하기 위해 gamepacket으로 디코딩
         const decodedMessage = decodedPacket['gamePacket']['GamePacket'].decode(gamePacket);
@@ -61,20 +57,8 @@ export const onData = (socket) => (data) => {
         if (missingFields.length > 0) {
           throw new Error(`Missing fields: ${missingFields.join(', ')}`);
         }
-        switch (packetType) {
-          case PacketType.REGISTER_REQUEST:
-            userRegisterHandler(socket, payload);
-            break;
-          case PacketType.LOGIN_REQUEST:
-            userLoginhandler(socket, payload);
-            break;
-          case PacketType.MATCH_REQUEST:
-            matchHandler(socket, payload);
-            break;
-          case PacketType.GAME_END_REQUEST:
-            endGameHandler(socket, payload);
-            break;
-        }
+        const handler = getHandlerByPacketType(packetType);
+        await handler(socket, payload);
       } catch (error) {
         if (error instanceof RangeError) {
           console.error('RangeError: index out of range', error);

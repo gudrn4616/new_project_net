@@ -1,7 +1,7 @@
 import { getUser } from '../../session/user.session.js';
 import { addGameSession, removeGameSession, getGameSession } from '../../session/game.session.js';
 import createResponse from '../../utils/response/createResponse.js';
-import { PacketType } from '../../constants/header.js';
+import { PacketType } from '../../constants/PacketTypes.js';
 // 매칭 대기열을 저장할 Set
 const waitingQueue = new Set();
 // 게임 중인 유저를 저장할 Set
