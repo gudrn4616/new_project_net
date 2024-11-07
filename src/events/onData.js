@@ -14,30 +14,34 @@ export const onData = (socket) => (data) => {
 
   while (socket.buffer.length >= totalHeaderLength) {
     const decodedPacket = getProtoMessages();
+    let offset = 0;
 
     // 패킷 타입 읽기 (2바이트)
-    const packetType = socket.buffer.readUInt16BE(0);
+    const packetType = socket.buffer.readUInt16BE(offset);
+    offset += config.packet.header.packetType;
 
     // 버전 길이 읽기 (1바이트)
-    const versionLength = socket.buffer.readUInt8(config.packet.header.packetType);
+    const versionLength = socket.buffer.readUInt8(offset);
+    offset += config.packet.header.versionLength;
 
     // 버전 문자열 읽기
-    const versionStart = config.packet.header.packetType + config.packet.header.versionLength;
-    const versionEnd = versionStart + versionLength;
-    const version = socket.buffer.toString('utf8', versionStart, versionEnd);
+    const versionEnd = offset + versionLength;
+    const version = socket.buffer.toString('utf8', offset, versionEnd);
     if (version !== config.client.version) {
       throw new Error('Invalid version');
     }
+    offset += versionLength;
 
     // 시퀀스 번호 읽기 (4바이트)
-    const sequence = socket.buffer.readUInt32BE(versionEnd);
+    const sequence = socket.buffer.readUInt32BE(offset);
+    offset += config.packet.header.sequence;
 
     // 페이로드 길이 읽기 (4바이트)
-    const payloadLengthStart = versionEnd + config.packet.header.sequence;
-    const payloadLength = socket.buffer.readUInt32BE(payloadLengthStart);
+    const payloadLength = socket.buffer.readUInt32BE(offset);
+    offset += config.packet.header.payloadLength;
 
     if (socket.buffer.length >= totalHeaderLength + payloadLength) {
-      const packetStartIndex = totalHeaderLength + versionLength;
+      const packetStartIndex = offset;
       const gamePacket = socket.buffer.subarray(packetStartIndex, packetStartIndex + payloadLength);
       socket.buffer = socket.buffer.subarray(packetStartIndex + payloadLength);
 
