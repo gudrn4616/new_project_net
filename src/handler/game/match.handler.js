@@ -2,21 +2,17 @@ import { getUser } from '../../session/user.session.js';
 import { addGameSession } from '../../session/game.session.js';
 import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/packetTypes.js';
-
-// 매칭 대기열을 저장할 Set
-const waitingQueue = new Set();
-// 게임 중인 유저를 저장할 Set
-const inGameUsers = new Set();
-// 게임 종료 대기열을 저장할 Set
-const endGameQueue = new Set();
-
-// Initial Game State
-const initialGameState = {
-  baseHp: 100,
-  towerCost: 100,
-  initialGold: 5000,
-  monsterSpawnInterval: 5000,
-};
+import {
+  getWaitingQueue,
+  addWaitingQueue,
+  removeWaitingQueue,
+  getInGameUsers,
+  addInGameUser,
+  removeInGameUser,
+  getEndGameQueue,
+  addEndGameQueue,
+  removeEndGameQueue,
+} from '../../session/game.session.js';
 
 /*
 message GameState {
@@ -31,73 +27,6 @@ message GameState {
   Position basePosition = 9;
 }
 */
-// GameState - player
-const playerData = {
-  gold: initialGameState.initialGold,
-  base: {
-    hp: initialGameState.baseHp,
-    maxHp: initialGameState.baseHp,
-  },
-  highScore: 0,
-  towers: [
-    { towerId: 1, x: 900.0, y: 300.0 },
-    { towerId: 2, x: 1100.0, y: 300.0 },
-  ],
-  monsters: [],
-  monsterLevel: 1,
-  score: 0,
-  monsterPath: [
-    { x: 0, y: 300 },
-    { x: 100, y: 300 },
-    { x: 200, y: 300 },
-    { x: 300, y: 300 },
-    { x: 400, y: 300 },
-    { x: 500, y: 300 },
-    { x: 600, y: 300 },
-    { x: 700, y: 300 },
-    { x: 800, y: 300 },
-    { x: 900, y: 300 },
-    { x: 1000, y: 300 },
-    { x: 1100, y: 300 },
-    { x: 1200, y: 300 },
-    { x: 1300, y: 300 },
-  ],
-  basePosition: { x: 1350.0, y: 300.0 },
-};
-
-// GameState - opponent
-const opponentData = {
-  gold: initialGameState.initialGold,
-  base: {
-    hp: initialGameState.baseHp,
-    maxHp: initialGameState.baseHp,
-  },
-  highScore: 0,
-  towers: [
-    { towerId: 1, x: 900.0, y: 300.0 },
-    { towerId: 2, x: 1100.0, y: 300.0 },
-  ],
-  monsters: [],
-  monsterLevel: 1,
-  score: 0,
-  monsterPath: [
-    { x: 0, y: 300 },
-    { x: 100, y: 300 },
-    { x: 200, y: 300 },
-    { x: 300, y: 300 },
-    { x: 400, y: 300 },
-    { x: 500, y: 300 },
-    { x: 600, y: 300 },
-    { x: 700, y: 300 },
-    { x: 800, y: 300 },
-    { x: 900, y: 300 },
-    { x: 1000, y: 300 },
-    { x: 1100, y: 300 },
-    { x: 1200, y: 300 },
-    { x: 1300, y: 300 },
-  ],
-  basePosition: { x: 1350.0, y: 300.0 },
-};
 
 export const matchHandler = async (socket, data) => {
   // 현재 유저 가져오기
@@ -109,39 +38,38 @@ export const matchHandler = async (socket, data) => {
   }
 
   // 이미 게임 중이거나 매칭 대기 중인 경우 처리하지 않음
-  if (inGameUsers.has(currentUser) || waitingQueue.has(currentUser)) {
+  if (getInGameUsers().has(currentUser) || getWaitingQueue().has(currentUser)) {
     return;
   }
 
   // 현재 유저를 매칭 대기열에 추가
-  waitingQueue.add(currentUser);
+  addWaitingQueue(currentUser);
+  console.log('매칭 대기열:', getWaitingQueue());
   // 매칭 대기열에 2명 이상이면 게임 매칭 시작
-  if (waitingQueue.size >= 2) {
+  if (getWaitingQueue().size >= 2) {
     // 대기열에서 첫 번째 유저와 두 번째 유저를 가져옴
-    const [user1, user2] = waitingQueue;
+    const [user1, user2] = getWaitingQueue();
 
     // 두 유저를 대기열에서 제거하고 게임 중 목록에 추가
-    waitingQueue.delete(user1);
-    waitingQueue.delete(user2);
-    inGameUsers.add(user1);
-    inGameUsers.add(user2);
+    removeWaitingQueue(user1, user2);
+    addInGameUser(user1, user2);
 
     // 게임 인스턴스 생성
     const game = addGameSession(user1, user2);
 
     const responsePayload1 = {
       matchStartNotification: {
-        initialGameState: initialGameState,
-        playerData: playerData,
-        opponentData: opponentData,
+        initialGameState: game.getInitialGameState(),
+        playerData: game.getGameState(user1),
+        opponentData: game.getGameState(user2),
       },
     };
 
     const responsePayload2 = {
       matchStartNotification: {
-        initialGameState: initialGameState,
-        playerData: opponentData,
-        opponentData: playerData,
+        initialGameState: game.getInitialGameState(),
+        playerData: game.getGameState(user2),
+        opponentData: game.getGameState(user1),
       },
     };
 

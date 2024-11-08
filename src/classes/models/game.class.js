@@ -1,56 +1,56 @@
-import initialGameState from './initialGameState.js';
+import { initialGameState, playerData } from '../../asset/initialGameState.js';
 
 class Game {
   constructor(user1, user2) {
     this.users = [user1, user2];
 
     this.baseHp = {
-      [user1.socket]: initialGameState.baseHp,
-      [user2.socket]: initialGameState.baseHp,
+      [user1.socket]: playerData.base.hp,
+      [user2.socket]: playerData.base.hp,
     };
 
     this.towerCost = initialGameState.towerCost;
 
     this.gold = {
-      [user1.socket]: initialGameState.initialGold,
-      [user2.socket]: initialGameState.initialGold,
+      [user1.socket]: playerData.gold,
+      [user2.socket]: playerData.gold,
     };
 
     this.monsterSpawnInterval = initialGameState.monsterSpawnInterval;
 
     this.topScore = {
-      [user1.socket]: 0,
-      [user2.socket]: 0,
+      [user1.socket]: playerData.highScore,
+      [user2.socket]: playerData.highScore,
     };
 
     this.score = {
-      [user1.socket]: 0,
-      [user2.socket]: 0,
+      [user1.socket]: playerData.score,
+      [user2.socket]: playerData.score,
     };
 
     this.monsterLevel = {
-      [user1.socket]: 1,
-      [user2.socket]: 1,
+      [user1.socket]: playerData.monsterLevel,
+      [user2.socket]: playerData.monsterLevel,
     };
 
     this.towers = {
-      [user1.socket]: [],
-      [user2.socket]: [],
+      [user1.socket]: [...playerData.towers],
+      [user2.socket]: [...playerData.towers],
     };
 
     this.monsters = {
-      [user1.socket]: [],
-      [user2.socket]: [],
+      [user1.socket]: [...playerData.monsters],
+      [user2.socket]: [...playerData.monsters],
     };
 
     this.monsterPath = {
-      [user1.socket]: [],
-      [user2.socket]: [],
+      [user1.socket]: [...playerData.monsterPath],
+      [user2.socket]: [...playerData.monsterPath],
     };
 
     this.basePosition = {
-      [user1.socket]: { x: 0, y: 0 },
-      [user2.socket]: { x: 0, y: 0 },
+      [user1.socket]: { ...playerData.basePosition },
+      [user2.socket]: { ...playerData.basePosition },
     };
 
     this.lastMonsterSpawn = {
@@ -68,21 +68,19 @@ class Game {
     };
   }
 
-  spawnMonster(player) {
-    const socket = player.socket;
-    const monsterId = Date.now();
-    const monsterNumber = Math.floor(Math.random() * 5) + 1;
-
-    const monster = {
-      id: monsterId,
-      number: monsterNumber,
+  getGameState(user) {
+    return {
+      userGold: this.gold[user.socket],
+      base: { hp: this.baseHp[user.socket], maxHp: playerData.base.maxHp },
+      highScore: this.topScore[user.socket],
+      towers: this.towers[user.socket] != null ? [...this.towers[user.socket]] : null,
+      monsters: this.monsters[user.socket] != null ? [...this.monsters[user.socket]] : null,
+      monsterLevel: this.monsterLevel[user.socket],
+      score: this.score[user.socket],
+      monsterPath:
+        this.monsterPath[user.socket] != null ? [...this.monsterPath[user.socket]] : null,
+      basePosition: this.basePosition[user.socket],
     };
-
-    this.monsters[socket].push(monster);
-    console.log(`몬스터가 생성되었습니다. ID: ${monsterId}, Number: ${monsterNumber}`);
-
-    return monster;
   }
 }
-
 export default Game;
