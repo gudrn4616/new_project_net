@@ -1,5 +1,6 @@
 import { initialGameState, playerData } from '../../asset/initialGameState.js';
 import Monster from './monster.class.js';
+import Tower from './tower.class.js';
 
 class Game {
   constructor(user1, user2) {
@@ -38,8 +39,8 @@ class Game {
     };
 
     this.towers = {
-      [user1Id]: [{ towerId: 1, x: 900.0, y: 300.0 }],
-      [user2Id]: [{ towerId: 2, x: 900.0, y: 300.0 }],
+      [user1Id]: [],
+      [user2Id]: [],
     };
 
     this.monsters = {
@@ -90,15 +91,15 @@ class Game {
     const towers = this.towers[user.id];
 
     if (towers) {
-      return towers.find((tower) => tower.towerId === towerId) || null;
+      return towers.find((tower) => tower.id === towerId) || null;
     }
 
     return null;
   }
 
-  addMonster(user, id, number, level) {
-    const newMonster = new Monster(user.socket, id, number, level);
-    this.monsters[user.id].push(newMonster);
+  addTower(user, id, x, y) {
+    const newTower = new Tower(user.socket, id, x, y);
+    this.towers[user.id].push({ id: newTower.id, x: newTower.x, y: newTower.y });
   }
 
   getMonster(user, monsterId) {
@@ -108,6 +109,11 @@ class Game {
     }
 
     return null;
+  }
+
+  addMonster(user, id, number, level) {
+    const newMonster = new Monster(user.socket, id, number, level);
+    this.monsters[user.id].push(newMonster);
   }
 
   removeMonster(user, monsterId) {

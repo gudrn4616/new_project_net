@@ -1,6 +1,7 @@
 class Tower {
-  constructor(socket, x, y) {
+  constructor(socket, id, x, y) {
     this.socket = socket;
+    this.id = id;
     this.x = x;
     this.y = y;
   }

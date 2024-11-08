@@ -47,18 +47,23 @@ export const matchHandler = async (socket, data) => {
       game = addGameSession(user1, user2);
     }
 
+    game.addTower(user1, 1, 900, 300);
+    game.addTower(user2, 2, 900, 300);
+
     const responsePayload1 = {
       initialGameState: game.getInitialGameState(),
       playerData: game.getGameState(user1),
       opponentData: game.getGameState(user2),
     };
 
+    /*
     console.log('=================');
     console.log('게임 세션 수: ', getAllGameSession.length);
     console.log('게임 세션: ', game);
     console.log('User1: =', game.getGameState(user1));
     console.log('User2: =', game.getGameState(user2));
     console.log('=================');
+    */
 
     const responsePayload2 = {
       initialGameState: game.getInitialGameState(),

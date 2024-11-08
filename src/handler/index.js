@@ -6,6 +6,7 @@ import towerAttackHandler from './tower/towerAttack.handler.js';
 import monsterDeathHandler from './monster/monsterDeath.handler.js';
 import monsterAttackBaseHandler from './game/baseAttackHandler.js';
 import monsterSpawnHandler from './monster/spawnMonster.handler.js';
+import towerPurchaseHandler from './tower/towerPurchase.handler.js';
 
 const handlers = {
   [PacketType.REGISTER_REQUEST]: {
@@ -35,6 +36,10 @@ const handlers = {
   [PacketType.MONSTER_DEATH_NOTIFICATION]: {
     handler: monsterDeathHandler,
     prototype: 'gamePacket.C2SMonsterDeathNotification',
+  },
+  [PacketType.TOWER_PURCHASE_REQUEST]: {
+    handler: towerPurchaseHandler,
+    prototype: 'gamePacket.C2STowerPurchaseRequest',
   },
 };
 
