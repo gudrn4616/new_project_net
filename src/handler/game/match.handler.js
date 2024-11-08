@@ -10,22 +10,94 @@ const inGameUsers = new Set();
 // 게임 종료 대기열을 저장할 Set
 const endGameQueue = new Set();
 
-const generateBasePosition = () => ({ x: 0, y: 0 });
-
-const generateMonsterPath = () => [
-  { x: 1, y: 2 },
-  { x: 2, y: 3 },
-  { x: 3, y: 4 },
-];
-
-const getInitialGameState = () => ({
+// Initial Game State
+const initialGameState = {
   baseHp: 100,
-  towerCost: 50,
-  initialGold: 200,
-  monsterSpawnInterval: 5,
-  basePosition: generateBasePosition(), // BasePosition 추가
-  monsterPath: generateMonsterPath(),
-});
+  towerCost: 100,
+  initialGold: 5000,
+  monsterSpawnInterval: 5000,
+};
+
+/*
+message GameState {
+  int32 gold = 1;
+  BaseData base = 2;
+  int32 highScore = 3;
+  repeated TowerData towers = 4;
+  repeated MonsterData monsters = 5;
+  int32 monsterLevel = 6;
+  int32 score = 7;
+  repeated Position monsterPath = 8;
+  Position basePosition = 9;
+}
+*/
+// GameState - player
+const playerData = {
+  gold: initialGameState.initialGold,
+  base: {
+    hp: initialGameState.baseHp,
+    maxHp: initialGameState.baseHp,
+  },
+  highScore: 0,
+  towers: [
+    { towerId: 1, x: 900.0, y: 300.0 },
+    { towerId: 2, x: 1100.0, y: 300.0 },
+  ],
+  monsters: [],
+  monsterLevel: 1,
+  score: 0,
+  monsterPath: [
+    { x: 0, y: 300 },
+    { x: 100, y: 300 },
+    { x: 200, y: 300 },
+    { x: 300, y: 300 },
+    { x: 400, y: 300 },
+    { x: 500, y: 300 },
+    { x: 600, y: 300 },
+    { x: 700, y: 300 },
+    { x: 800, y: 300 },
+    { x: 900, y: 300 },
+    { x: 1000, y: 300 },
+    { x: 1100, y: 300 },
+    { x: 1200, y: 300 },
+    { x: 1300, y: 300 },
+  ],
+  basePosition: { x: 1350.0, y: 300.0 },
+};
+
+// GameState - opponent
+const opponentData = {
+  gold: initialGameState.initialGold,
+  base: {
+    hp: initialGameState.baseHp,
+    maxHp: initialGameState.baseHp,
+  },
+  highScore: 0,
+  towers: [
+    { towerId: 1, x: 900.0, y: 300.0 },
+    { towerId: 2, x: 1100.0, y: 300.0 },
+  ],
+  monsters: [],
+  monsterLevel: 1,
+  score: 0,
+  monsterPath: [
+    { x: 0, y: 300 },
+    { x: 100, y: 300 },
+    { x: 200, y: 300 },
+    { x: 300, y: 300 },
+    { x: 400, y: 300 },
+    { x: 500, y: 300 },
+    { x: 600, y: 300 },
+    { x: 700, y: 300 },
+    { x: 800, y: 300 },
+    { x: 900, y: 300 },
+    { x: 1000, y: 300 },
+    { x: 1100, y: 300 },
+    { x: 1200, y: 300 },
+    { x: 1300, y: 300 },
+  ],
+  basePosition: { x: 1350.0, y: 300.0 },
+};
 
 export const matchHandler = async (socket, data) => {
   // 현재 유저 가져오기
@@ -56,22 +128,20 @@ export const matchHandler = async (socket, data) => {
 
     // 게임 인스턴스 생성
     const game = addGameSession(user1, user2);
-    let user1InitialGameState = getInitialGameState();
-    let user2InitialGameState = getInitialGameState();
 
     const responsePayload1 = {
       matchStartNotification: {
-        initialGameState: user1InitialGameState,
-        playerData: user1InitialGameState,
-        opponentData: user2InitialGameState,
+        initialGameState: initialGameState,
+        playerData: playerData,
+        opponentData: opponentData,
       },
     };
 
     const responsePayload2 = {
       matchStartNotification: {
-        initialGameState: user2InitialGameState,
-        playerData: user2InitialGameState,
-        opponentData: user1InitialGameState,
+        initialGameState: initialGameState,
+        playerData: opponentData,
+        opponentData: playerData,
       },
     };
 
