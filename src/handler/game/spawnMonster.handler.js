@@ -1,7 +1,7 @@
 import { getGameSession } from '../../session/game.session.js';
 import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/packetTypes.js';
-import { createSpawnEnemyMonsterPacket } from '../../utils/notification/game.notification.js';
+import { createNotificationPacket } from '../../utils/notification/game.notification.js';
 
 let cnt = 1;
 
@@ -36,7 +36,13 @@ export const monsterSpawnHandler = async (socket, payload) => {
     );
 
     socket.write(monsetSpawnResponse);
-    opponent.socket.write(createSpawnEnemyMonsterPacket(monsterSpawnResponseData));
+    //opponent.socket.write(createSpawnEnemyMonsterPacket(monsterSpawnResponseData));
+    opponent.socket.write(
+      createNotificationPacket(
+        monsterSpawnResponseData,
+        PacketType.SPAWN_ENEMY_MONSTER_NOTIFICATION,
+      ),
+    );
   } catch (err) {
     console.error('몬스터 생성 중 에러 발생:', err);
     /*
