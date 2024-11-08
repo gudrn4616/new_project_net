@@ -18,18 +18,17 @@ const handlers = {
     handler: matchHandler,
     prototype: 'gamePacket.C2SMatchRequest',
   },
-  /*
-  [PacketType.MATCH_START_NOTIFICATION]: {
-    handler: endGameHandler,
-    prototype: 'gamePacket.S2CMatchStartNotification',
-  },*/
+  [PacketType.SPAWN_MONSTER_REQUEST]: {
+    handler: monsterSpawnHandler,
+    prototype: 'gamePacket.C2SSpawnMonsterRequest',
+  },
   [PacketType.MONSTER_ATTACK_BASE_REQUEST]: {
     handler: monsterAttackBaseHandler,
     prototype: 'gamePacket.C2SMonsterAttackBaseRequest',
   },
-  [PacketType.SPAWN_MONSTER_REQUEST]: {
-    handler: monsterSpawnHandler,
-    prototype: 'gamePacket.C2SSpawnMonsterRequest',
+  [PacketType.TOWER_ATTACK_REQUEST]: {
+    handler: null,
+    prototype: 'gamePacket.C2STowerAttackRequest',
   },
 };
 
