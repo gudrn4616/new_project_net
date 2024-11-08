@@ -16,11 +16,9 @@ const userRegisterHandler = async (socket, payload) => {
       // 회원가입 실패 - ID 중복
       const errorResponse = createResponse(
         {
-          registerResponse: {
-            success: false,
-            message: 'register fail',
-            failCode: 3,
-          },
+          success: false,
+          message: 'register fail',
+          failCode: 3,
         },
         null,
         PacketType.REGISTER_RESPONSE,
@@ -36,11 +34,9 @@ const userRegisterHandler = async (socket, payload) => {
     console.log('회원가입 성공');
 
     const responsePayload = {
-      registerResponse: {
-        success: true,
-        message: 'register success',
-        failCode: 0,
-      },
+      success: true,
+      message: 'register success',
+      failCode: 0,
     };
 
     const response = createResponse(responsePayload, null, PacketType.REGISTER_RESPONSE);

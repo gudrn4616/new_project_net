@@ -14,20 +14,6 @@ import {
   removeEndGameQueue,
 } from '../../session/game.session.js';
 
-/*
-message GameState {
-  int32 gold = 1;
-  BaseData base = 2;
-  int32 highScore = 3;
-  repeated TowerData towers = 4;
-  repeated MonsterData monsters = 5;
-  int32 monsterLevel = 6;
-  int32 score = 7;
-  repeated Position monsterPath = 8;
-  Position basePosition = 9;
-}
-*/
-
 export const matchHandler = async (socket, data) => {
   // 현재 유저 가져오기
   console.log('매칭 요청:');
@@ -58,19 +44,15 @@ export const matchHandler = async (socket, data) => {
     const game = addGameSession(user1, user2);
 
     const responsePayload1 = {
-      matchStartNotification: {
-        initialGameState: game.getInitialGameState(),
-        playerData: game.getGameState(user1),
-        opponentData: game.getGameState(user2),
-      },
+      initialGameState: game.getInitialGameState(),
+      playerData: game.getGameState(user1),
+      opponentData: game.getGameState(user2),
     };
 
     const responsePayload2 = {
-      matchStartNotification: {
-        initialGameState: game.getInitialGameState(),
-        playerData: game.getGameState(user2),
-        opponentData: game.getGameState(user1),
-      },
+      initialGameState: game.getInitialGameState(),
+      playerData: game.getGameState(user2),
+      opponentData: game.getGameState(user1),
     };
 
     const response1 = createResponse(responsePayload1, user1, PacketType.MATCH_START_NOTIFICATION);

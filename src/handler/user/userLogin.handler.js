@@ -16,12 +16,10 @@ const userLoginHandler = async (socket, payload) => {
       console.error(`${id} 유저가 존재하지 않습니다.`);
       const errorResponse = createResponse(
         {
-          loginResponse: {
-            success: false,
-            message: '유저가 존재하지 않습니다.',
-            token: '',
-            failCode: 3,
-          },
+          success: false,
+          message: '유저가 존재하지 않습니다.',
+          token: '',
+          failCode: 3,
         },
         null,
         PacketType.LOGIN_RESPONSE,
@@ -36,12 +34,10 @@ const userLoginHandler = async (socket, payload) => {
       console.error(`${socket}: 비밀번호가 틀렸습니다.`);
       const errorResponse = createResponse(
         {
-          loginResponse: {
-            success: false,
-            message: '비밀번호가 틀렸습니다.',
-            token: '',
-            failCode: 3,
-          },
+          success: false,
+          message: '비밀번호가 틀렸습니다.',
+          token: '',
+          failCode: 3,
         },
         null,
         PacketType.LOGIN_RESPONSE,

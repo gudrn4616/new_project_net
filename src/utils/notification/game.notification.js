@@ -8,6 +8,7 @@ const makeNotification = (message, packetType, sequence) => {
   return Buffer.concat([header, message]);
 };
 
+/*
 export const createSpawnMonsterPacket = (payload) => {
   const protoMessages = getProtoMessages();
   const response = protoMessages.gamePacket.GamePacket;
@@ -16,6 +17,7 @@ export const createSpawnMonsterPacket = (payload) => {
 
   return makeNotification(responsePacket, PacketType.SPAWN_MONSTER_RESPONSE, 0);
 };
+*/
 
 export const createSpawnEnemyMonsterPacket = (payload) => {
   const protoMessages = getProtoMessages();
