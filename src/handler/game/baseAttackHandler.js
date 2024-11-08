@@ -1,7 +1,7 @@
 import { getUser } from '../../session/user.session.js';
 import { getGameSession } from '../../session/game.session.js';
-import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/packetTypes.js';
+import { createNotificationPacket } from '../../utils/notification/game.notification.js';
 
 // 몬스터의 기지 공격 요청 처리 함수
 const monsterAttackBaseHandler = async (socket, packet) => {
@@ -52,12 +52,15 @@ const monsterAttackBaseHandler = async (socket, packet) => {
 
 // 기지 체력 업데이트 알림 함수
 const notificationBaseHealthUpdate = (user, baseHealth, isOpponent) => {
-  const responsePayload = {
+  const notificationPayload = {
     isOpponent: isOpponent,
     baseHp: baseHealth,
   };
 
-  const response = createResponse(responsePayload, user, PacketType.UPDATE_BASE_HP_NOTIFICATION);
+  const response = createNotificationPacket(
+    notificationPayload,
+    PacketType.UPDATE_BASE_HP_NOTIFICATION,
+  );
 
   // 피아식별 구분
   user.socket.write(response);
