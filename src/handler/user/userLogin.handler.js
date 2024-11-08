@@ -4,6 +4,7 @@ import { PacketType } from '../../constants/packetTypes.js';
 import { findUserById } from '../../db/user/user.db.js';
 import bcrypt from 'bcrypt';
 import { addUser } from '../../session/user.session.js';
+
 const userLoginHandler = async (socket, payload) => {
   try {
     const id = payload.id;
@@ -67,6 +68,9 @@ const userLoginHandler = async (socket, payload) => {
     const userSession = await addUser(socket, user);
 
     const response = createResponse(responsePayload, userSession, PacketType.LOGIN_RESPONSE);
+
+    console.log('Sending response:', response);
+
     socket.write(response);
   } catch (err) {
     throw new Error(err);

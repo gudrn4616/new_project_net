@@ -23,7 +23,7 @@ const handlers = {
     prototype: 'gamePacket.S2CMatchStartNotification',
   },*/
   [PacketType.MONSTER_ATTACK_BASE_REQUEST]: {
-    handler: monsterSpawnHandler,
+    handler: null,
     prototype: 'gamePacket.C2SMonsterAttackBaseRequest',
   },
   [PacketType.SPAWN_MONSTER_REQUEST]: {
