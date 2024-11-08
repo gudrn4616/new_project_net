@@ -15,7 +15,7 @@ export const playerData = {
   highScore: 0,
   towers: [
     { towerId: 1, x: 900.0, y: 300.0 },
-    { towerId: 2, x: 1100.0, y: 300.0 },
+    //{ towerId: 2, x: 1100.0, y: 300.0 },
   ],
   monsters: [],
   monsterLevel: 1,

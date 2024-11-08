@@ -8,7 +8,7 @@ const createHeader = (payloadLength, packetType, sequence) => {
     payloadLength: PAYLOAD_LENGTH_SIZE,
   } = config.packet.header;
 
-  console.log('CLIENT_VERSION in createHeader:', config.client.version);
+  //console.log('CLIENT_VERSION in createHeader:', config.client.version);
 
   if (!config.client.version) {
     throw new Error('CLIENT_VERSION is undefined');

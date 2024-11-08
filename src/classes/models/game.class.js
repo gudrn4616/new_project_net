@@ -107,6 +107,10 @@ class Game {
 
     return null;
   }
+
+  removeMonster(socket, monsterId) {
+    this.monsters[socket] = this.monsters[socket].filter((monster) => monster.id !== monsterId);
+  }
 }
 
 export default Game;

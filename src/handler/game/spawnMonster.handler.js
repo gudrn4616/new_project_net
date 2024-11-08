@@ -39,6 +39,7 @@ export const monsterSpawnHandler = async (socket, payload) => {
     );
 
     socket.write(monsetSpawnResponse);
+
     opponent.socket.write(
       createNotificationPacket(
         monsterSpawnResponseData,

@@ -4,6 +4,7 @@ import { matchHandler } from './game/match.handler.js';
 import { PacketType } from '../constants/packetTypes.js';
 import { monsterSpawnHandler } from './game/spawnMonster.handler.js';
 import towerAttackHandler from './tower/towerAttack.handler.js';
+import monsterDeathHandler from './monster/monsterDeath.handler.js';
 
 const handlers = {
   [PacketType.REGISTER_REQUEST]: {
@@ -29,6 +30,10 @@ const handlers = {
   [PacketType.TOWER_ATTACK_REQUEST]: {
     handler: towerAttackHandler,
     prototype: 'gamePacket.C2STowerAttackRequest',
+  },
+  [PacketType.MONSTER_DEATH_NOTIFICATION]: {
+    handler: monsterDeathHandler,
+    prototype: 'gamePacket.C2SMonsterDeathNotification',
   },
 };
 

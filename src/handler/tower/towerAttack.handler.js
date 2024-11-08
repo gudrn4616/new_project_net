@@ -24,7 +24,8 @@ const towerAttackHandler = (socket, payload) => {
 
     const monster = game.getMonster(socket, monsterId);
     if (!monster) {
-      throw new Error('해당 몬스터가 존재하지 않습니다.');
+      console.warn(`Warning: 몬스터 ${monsterId}가 이미 제거되었거나 존재하지 않습니다.`);
+      return;
     }
 
     const opponent = game.users.find((user) => user.socket !== socket);
