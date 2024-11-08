@@ -37,3 +37,41 @@ export const PacketType = {
   // 적 몬스터 사망
   ENEMY_MONSTER_DEATH_NOTIFICATION: 21,
 };
+
+export const PayloadName = {
+  // 회원가입 및 로그인
+  1: 'registerRequest',
+  2: 'registerResponse',
+  3: 'loginRequest',
+  4: 'loginResponse',
+  // 매칭
+  5: 'matchRequest',
+  6: 'matchStartNotification',
+  // 게임 상태 동기화
+  7: 'stateSyncNotification',
+  // 타워 구매
+  8: 'towerPurchaseRequest',
+  9: 'towerPurchaseResponse',
+  // 적 타워 추가
+  10: 'addEnemyTowerNotification',
+  // 몬스터 생성
+  11: 'spawnMonsterRequest',
+  12: 'spawnMonsterResponse',
+  // 적 몬스터 생성
+  13: 'spawnEnemyMonsterNotification',
+  // 타워 공격
+  14: 'towerAttackRequest',
+  // 적 타워 공격
+  15: 'enemyTowerAttackNotification',
+  // 몬스터 공격
+  16: 'monsterAttackBaseRequest',
+  // 기지 체력 업데이트
+  17: 'updateBaseHpNotification',
+  // 게임 종료
+  18: 'gameOverNotification',
+  19: 'gameEndRequest',
+  // 몬스터 사망
+  20: 'monsterDeathNotification',
+  // 적 몬스터 사망
+  21: 'enemyMonsterDeathNotification',
+};
