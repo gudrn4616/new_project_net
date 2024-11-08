@@ -3,23 +3,8 @@ import { getGameSession } from '../../session/game.session.js';
 import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/packetTypes.js';
 
-// 기지 체력 업데이트 알림 함수
-const notificationBaseHealthUpdate = (user, baseHealth, isenemy) => {
-  const responsePayload = {
-    isenemy,
-    baseHealth,
-  };
-
-  const response = createResponse(responsePayload, user, PacketType.UPDATE_BASE_HP_NOTIFICATION);
-
-  console.log(`기지 체력 업데이트 알림 패킷 전송: ${response}`);
-
-  // 피아식별 구분
-  user.socket.write(response);
-};
-
 // 몬스터의 기지 공격 요청 처리 함수
-export const monsterAttackBaseHandler = async (socket, packet) => {
+const monsterAttackBaseHandler = async (socket, packet) => {
   try {
     console.log('기지 공격 요청 처리 핸들러 호출됨');
 
@@ -35,11 +20,9 @@ export const monsterAttackBaseHandler = async (socket, packet) => {
       return;
     }
 
-    console.log('Received packet:', JSON.stringify(packet, null, 2)); // 디버깅용 패킷 전체 출력
-
     // 패킷의 속성 직접 확인
     const { damage } = packet;
-    if (damage === undefined) {
+    if (!damage) {
       console.error(
         `Invalid packet: damage is missing. Packet: ${JSON.stringify(packet, null, 2)}`,
       );
@@ -52,12 +35,9 @@ export const monsterAttackBaseHandler = async (socket, packet) => {
       return;
     }
 
-    console.log(`기지 공격 요청 - Current Base HP: ${baseHp}, Damage: ${damage}`);
-
     // 현재 사용자의 기지 체력 업데이트
     game.baseHp[currentUser.socket] -= damage;
     if (game.baseHp[currentUser.socket] < 0) game.baseHp[currentUser.socket] = 0;
-    console.log('baseHp: ', game.baseHp, game.baseHp[currentUser.socket] < 0);
 
     // 현재 유저에게 기지 체력 업데이트 알림 전송
     notificationBaseHealthUpdate(currentUser, game.baseHp[currentUser.socket], false);
@@ -71,3 +51,18 @@ export const monsterAttackBaseHandler = async (socket, packet) => {
     console.error('기지 공격 처리 중 에러 발생:', err);
   }
 };
+
+// 기지 체력 업데이트 알림 함수
+const notificationBaseHealthUpdate = (user, baseHealth, isOpponent) => {
+  const responsePayload = {
+    isOpponent: isOpponent,
+    baseHp: baseHealth,
+  };
+
+  const response = createResponse(responsePayload, user, PacketType.UPDATE_BASE_HP_NOTIFICATION);
+
+  // 피아식별 구분
+  user.socket.write(response);
+};
+
+export default monsterAttackBaseHandler;

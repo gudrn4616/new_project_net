@@ -2,8 +2,8 @@ import userRegisterHandler from './user/userRegister.handler.js';
 import userLoginHandler from './user/userLogin.handler.js';
 import { matchHandler } from './game/match.handler.js';
 import { PacketType } from '../constants/packetTypes.js';
-import { monsterSpawnHandler } from './game/spawnMonster.handler.js';
-import { monsterAttackBaseHandler } from './game/baseAttackHandler.js';
+import monsterAttackBaseHandler from './game/baseAttackHandler.js';
+import monsterSpawnHandler from './game/spawnMonster.handler.js';
 
 const handlers = {
   [PacketType.REGISTER_REQUEST]: {

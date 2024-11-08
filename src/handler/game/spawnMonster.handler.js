@@ -5,7 +5,7 @@ import { createNotificationPacket } from '../../utils/notification/game.notifica
 
 let cnt = 1;
 
-export const monsterSpawnHandler = async (socket, payload) => {
+const monsterSpawnHandler = async (socket, payload) => {
   try {
     const gameSession = getGameSession(socket);
     if (!gameSession) {
@@ -55,3 +55,5 @@ export const monsterSpawnHandler = async (socket, payload) => {
     */
   }
 };
+
+export default monsterSpawnHandler;
