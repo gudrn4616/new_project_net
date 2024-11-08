@@ -3,7 +3,7 @@ import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/packetTypes.js';
 import { createNotificationPacket } from '../../utils/notification/game.notification.js';
 
-let tmpId = 0;
+let tmpId = 1;
 
 export const monsterSpawnHandler = async (socket, payload) => {
   try {

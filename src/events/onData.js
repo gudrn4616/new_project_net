@@ -44,17 +44,23 @@ export const onData = (socket) => async (data) => {
 
       try {
         const protoTypeName = getProtoTypeNameByPacketType(packetType);
+        console.log(`1. protoTypeName: ${protoTypeName}`);
+
         const [namespace, typeName] = protoTypeName.split('.');
-        // payload 추출 하기 위해 gamepacket으로 디코딩
         const decodedMessage = decodedPacket['gamePacket']['GamePacket'].decode(gamePacket);
+        console.log(`2. decodedMessage:`, decodedMessage);
 
         let payload;
         for (const [key, value] of Object.entries(decodedMessage)) {
           payload = value;
         }
+        console.log(`3. payload:`, payload);
 
         const expectedFields = Object.keys(decodedPacket[namespace][typeName].fields);
         const actualFields = Object.keys(payload);
+        console.log(`expectedFields:`, expectedFields);
+        console.log(`actualFields:`, actualFields);
+
         const missingFields = expectedFields.filter((field) => !actualFields.includes(field));
         if (missingFields.length > 0) {
           throw new Error(`Missing fields: ${missingFields.join(', ')}`);

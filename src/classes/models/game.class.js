@@ -88,7 +88,7 @@ class Game {
     const towers = this.towers[socket];
 
     if (towers) {
-      return towers.find((tower) => tower.id === towerId) || null;
+      return towers.find((tower) => tower.towerId === towerId) || null;
     }
 
     return null;
@@ -97,6 +97,15 @@ class Game {
   addMonster(socket, id, number, level) {
     const newMonster = new Monster(socket, id, number, level);
     this.monsters[socket].push(newMonster);
+  }
+
+  getMonster(socket, monsterId) {
+    const monsters = this.monsters[socket];
+    if (monsters) {
+      return monsters.find((monster) => monster.id === monsterId) || null;
+    }
+
+    return null;
   }
 }
 
