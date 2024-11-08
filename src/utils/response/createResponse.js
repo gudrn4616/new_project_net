@@ -8,7 +8,7 @@ const createResponse = (responsePayload, user, packetType) => {
 
   const payloadName = PayloadName[packetType];
   console.log('payloadName: ', payloadName);
-  const payloadBuffer = response.encode(responsePayload).finish();
+  const payloadBuffer = response.encode({ [payloadName]: responsePayload }).finish();
 
   if (typeof packetType === 'undefined') {
     throw new Error('Packet type is undefined');

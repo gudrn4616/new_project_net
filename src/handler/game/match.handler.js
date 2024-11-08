@@ -130,19 +130,15 @@ export const matchHandler = async (socket, data) => {
     const game = addGameSession(user1, user2);
 
     const responsePayload1 = {
-      matchStartNotification: {
-        initialGameState: initialGameState,
-        playerData: playerData,
-        opponentData: opponentData,
-      },
+      initialGameState: initialGameState,
+      playerData: playerData,
+      opponentData: opponentData,
     };
 
     const responsePayload2 = {
-      matchStartNotification: {
-        initialGameState: initialGameState,
-        playerData: opponentData,
-        opponentData: playerData,
-      },
+      initialGameState: initialGameState,
+      playerData: opponentData,
+      opponentData: playerData,
     };
 
     const response1 = createResponse(responsePayload1, user1, PacketType.MATCH_START_NOTIFICATION);
