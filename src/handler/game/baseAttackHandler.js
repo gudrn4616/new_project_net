@@ -6,8 +6,6 @@ import { PacketType } from '../../constants/packetTypes.js';
 // 몬스터의 기지 공격 요청 처리 함수
 const monsterAttackBaseHandler = async (socket, packet) => {
   try {
-    console.log('기지 공격 요청 처리 핸들러 호출됨');
-
     const currentUser = getUser(socket);
     if (!currentUser) {
       console.error('유저가 존재하지 않습니다.');
