@@ -3,6 +3,7 @@ import userLoginHandler from './user/userLogin.handler.js';
 import { matchHandler } from './game/match.handler.js';
 import { PacketType } from '../constants/packetTypes.js';
 import { monsterSpawnHandler } from './game/spawnMonster.handler.js';
+import { monsterAttackBaseHandler } from './game/baseAttackHandler.js';
 
 const handlers = {
   [PacketType.REGISTER_REQUEST]: {
@@ -23,7 +24,7 @@ const handlers = {
     prototype: 'gamePacket.S2CMatchStartNotification',
   },*/
   [PacketType.MONSTER_ATTACK_BASE_REQUEST]: {
-    handler: null,
+    handler: monsterAttackBaseHandler,
     prototype: 'gamePacket.C2SMonsterAttackBaseRequest',
   },
   [PacketType.SPAWN_MONSTER_REQUEST]: {
