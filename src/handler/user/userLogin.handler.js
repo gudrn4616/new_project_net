@@ -57,12 +57,10 @@ const userLoginHandler = async (socket, payload) => {
     const bearerToken = `Bearer ${token}`;
 
     const responsePayload = {
-      loginResponse: {
-        success: true,
-        message: '로그인 성공',
-        token: bearerToken,
-        failCode: 0,
-      },
+      success: true,
+      message: '로그인 성공',
+      token: bearerToken,
+      failCode: 0,
     };
 
     const userSession = await addUser(socket, user);
