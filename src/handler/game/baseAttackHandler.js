@@ -6,8 +6,6 @@ import { PacketType } from '../../constants/packetTypes.js';
 // 몬스터의 기지 공격 요청 처리 함수
 const monsterAttackBaseHandler = async (socket, packet) => {
   try {
-    console.log('기지 공격 요청 처리 핸들러 호출됨');
-
     const currentUser = getUser(socket);
     if (!currentUser) {
       console.error('유저가 존재하지 않습니다.');
@@ -29,23 +27,23 @@ const monsterAttackBaseHandler = async (socket, packet) => {
       return;
     }
 
-    const baseHp = game.baseHp[currentUser.socket];
+    const baseHp = game.baseHp[currentUser.id];
     if (typeof baseHp === 'undefined') {
       console.error('기지 체력 정보를 찾을 수 없습니다.');
       return;
     }
 
     // 현재 사용자의 기지 체력 업데이트
-    game.baseHp[currentUser.socket] -= damage;
-    if (game.baseHp[currentUser.socket] < 0) game.baseHp[currentUser.socket] = 0;
+    game.baseHp[currentUser.id] -= damage;
+    if (game.baseHp[currentUser.id] < 0) game.baseHp[currentUser.id] = 0;
 
     // 현재 유저에게 기지 체력 업데이트 알림 전송
-    notificationBaseHealthUpdate(currentUser, game.baseHp[currentUser.socket], false);
+    notificationBaseHealthUpdate(currentUser, game.baseHp[currentUser.id], false);
 
     // 상대 유저에게도 기지 체력 업데이트 알림 전송
-    const opponent = game.users.find((user) => user.socket !== currentUser.socket);
+    const opponent = game.users.find((user) => user.id !== currentUser.id);
     if (opponent) {
-      notificationBaseHealthUpdate(opponent, game.baseHp[currentUser.socket], true);
+      notificationBaseHealthUpdate(opponent, game.baseHp[currentUser.id], true);
     }
   } catch (err) {
     console.error('기지 공격 처리 중 에러 발생:', err);

@@ -3,89 +3,91 @@ import Monster from './monster.class.js';
 
 class Game {
   constructor(user1, user2) {
+    const user1Id = user1.id;
+    const user2Id = user2.id;
+
     this.users = [user1, user2];
 
     this.baseHp = {
-      [user1.socket]: playerData.base.hp,
-      [user2.socket]: playerData.base.hp,
+      [user1Id]: playerData.base.hp,
+      [user2Id]: playerData.base.hp,
     };
 
     this.towerCost = initialGameState.towerCost;
 
     this.gold = {
-      [user1.socket]: playerData.gold,
-      [user2.socket]: playerData.gold,
+      [user1Id]: playerData.gold,
+      [user2Id]: playerData.gold,
     };
 
     this.monsterSpawnInterval = initialGameState.monsterSpawnInterval;
 
     this.topScore = {
-      [user1.socket]: playerData.highScore,
-      [user2.socket]: playerData.highScore,
+      [user1Id]: playerData.highScore,
+      [user2Id]: playerData.highScore,
     };
 
     this.score = {
-      [user1.socket]: playerData.score,
-      [user2.socket]: playerData.score,
+      [user1Id]: playerData.score,
+      [user2Id]: playerData.score,
     };
 
     this.monsterLevel = {
-      [user1.socket]: playerData.monsterLevel,
-      [user2.socket]: playerData.monsterLevel,
+      [user1Id]: playerData.monsterLevel,
+      [user2Id]: playerData.monsterLevel,
     };
 
     this.towers = {
-      [user1.socket]: [...playerData.towers],
-      [user2.socket]: [...playerData.towers],
+      [user1Id]: [{ towerId: 1, x: 900.0, y: 300.0 }],
+      [user2Id]: [{ towerId: 2, x: 900.0, y: 300.0 }],
     };
 
     this.monsters = {
-      [user1.socket]: [],
-      [user2.socket]: [],
+      [user1Id]: [],
+      [user2Id]: [],
     };
 
     this.monsterPath = {
-      [user1.socket]: [...playerData.monsterPath],
-      [user2.socket]: [...playerData.monsterPath],
+      [user1Id]: [...playerData.monsterPath],
+      [user2Id]: [...playerData.monsterPath],
     };
 
     this.basePosition = {
-      [user1.socket]: { ...playerData.basePosition },
-      [user2.socket]: { ...playerData.basePosition },
+      [user1Id]: { ...playerData.basePosition },
+      [user2Id]: { ...playerData.basePosition },
     };
 
     this.lastMonsterSpawn = {
-      [user1.socket]: 0,
-      [user2.socket]: 0,
+      [user1Id]: 0,
+      [user2Id]: 0,
     };
   }
 
   getInitialGameState() {
     return {
-      baseHp: this.baseHp[this.users[0].socket],
+      baseHp: this.baseHp[this.users[0].id],
       towerCost: this.towerCost,
-      initialGold: this.gold[this.users[0].socket],
+      initialGold: this.gold[this.users[0].id],
       monsterSpawnInterval: this.monsterSpawnInterval,
     };
   }
 
   getGameState(user) {
     return {
-      userGold: this.gold[user.socket],
-      base: { hp: this.baseHp[user.socket], maxHp: playerData.base.maxHp },
-      highScore: this.topScore[user.socket],
-      towers: this.towers[user.socket] != null ? [...this.towers[user.socket]] : null,
-      monsters: this.monsters[user.socket] != null ? [...this.monsters[user.socket]] : null,
-      monsterLevel: this.monsterLevel[user.socket],
-      score: this.score[user.socket],
-      monsterPath:
-        this.monsterPath[user.socket] != null ? [...this.monsterPath[user.socket]] : null,
-      basePosition: this.basePosition[user.socket],
+      userGold: this.gold[user.id],
+      base: { hp: this.baseHp[user.id], maxHp: playerData.base.maxHp },
+      highScore: this.topScore[user.id],
+      towers: this.towers[user.id] != null ? [...this.towers[user.id]] : null,
+      monsters: this.monsters[user.id] != null ? [...this.monsters[user.id]] : null,
+      monsterLevel: this.monsterLevel[user.id],
+      score: this.score[user.id],
+      monsterPath: this.monsterPath[user.id] != null ? [...this.monsterPath[user.id]] : null,
+      basePosition: this.basePosition[user.id],
     };
   }
 
-  getTower(socket, towerId) {
-    const towers = this.towers[socket];
+  getTower(user, towerId) {
+    const towers = this.towers[user.id];
 
     if (towers) {
       return towers.find((tower) => tower.towerId === towerId) || null;
@@ -94,13 +96,13 @@ class Game {
     return null;
   }
 
-  addMonster(socket, id, number, level) {
-    const newMonster = new Monster(socket, id, number, level);
-    this.monsters[socket].push(newMonster);
+  addMonster(user, id, number, level) {
+    const newMonster = new Monster(user.socket, id, number, level);
+    this.monsters[user.id].push(newMonster);
   }
 
-  getMonster(socket, monsterId) {
-    const monsters = this.monsters[socket];
+  getMonster(user, monsterId) {
+    const monsters = this.monsters[user.id];
     if (monsters) {
       return monsters.find((monster) => monster.id === monsterId) || null;
     }
@@ -108,8 +110,8 @@ class Game {
     return null;
   }
 
-  removeMonster(socket, monsterId) {
-    this.monsters[socket] = this.monsters[socket].filter((monster) => monster.id !== monsterId);
+  removeMonster(user, monsterId) {
+    this.monsters[user.id] = this.monsters[user.id].filter((monster) => monster.id !== monsterId);
   }
 }
 

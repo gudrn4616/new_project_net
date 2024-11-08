@@ -26,6 +26,10 @@ export const getGameSession = (socket) => {
   );
 };
 
+export const getAllGameSession = () => {
+  return gameSessions;
+};
+
 export const getWaitingQueue = () => {
   return waitingQueue;
 };

@@ -1,5 +1,5 @@
 import { getUser } from '../../session/user.session.js';
-import { addGameSession } from '../../session/game.session.js';
+import { addGameSession, getAllGameSession, getGameSession } from '../../session/game.session.js';
 import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/packetTypes.js';
 import {
@@ -31,6 +31,7 @@ export const matchHandler = async (socket, data) => {
   // 현재 유저를 매칭 대기열에 추가
   addWaitingQueue(currentUser);
   console.log('매칭 대기열:', getWaitingQueue());
+
   // 매칭 대기열에 2명 이상이면 게임 매칭 시작
   if (getWaitingQueue().size >= 2) {
     // 대기열에서 첫 번째 유저와 두 번째 유저를 가져옴
@@ -41,13 +42,23 @@ export const matchHandler = async (socket, data) => {
     addInGameUser(user1, user2);
 
     // 게임 인스턴스 생성
-    const game = addGameSession(user1, user2);
+    let game = getGameSession(socket);
+    if (!game) {
+      game = addGameSession(user1, user2);
+    }
 
     const responsePayload1 = {
       initialGameState: game.getInitialGameState(),
       playerData: game.getGameState(user1),
       opponentData: game.getGameState(user2),
     };
+
+    console.log('=================');
+    console.log('게임 세션 수: ', getAllGameSession.length);
+    console.log('게임 세션: ', game);
+    console.log('User1: =', game.getGameState(user1));
+    console.log('User2: =', game.getGameState(user2));
+    console.log('=================');
 
     const responsePayload2 = {
       initialGameState: game.getInitialGameState(),

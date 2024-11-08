@@ -7,30 +7,30 @@ const towerAttackHandler = (socket, payload) => {
   try {
     const { towerId, monsterId } = payload;
 
-    const user = getUser(socket);
-    if (!user) {
-      throw new Error('유저가 존재하지 않습니다.');
-    }
-
     const game = getGameSession(socket);
     if (!game) {
       throw new Error('게임 세션이 존재하지 않습니다.');
     }
 
-    const tower = game.getTower(socket, towerId);
-    if (!tower) {
-      throw new Error('해당 타워가 존재하지 않습니다.');
-    }
-
-    const monster = game.getMonster(socket, monsterId);
-    if (!monster) {
-      console.warn(`Warning: 몬스터 ${monsterId}가 이미 제거되었거나 존재하지 않습니다.`);
-      return;
+    const user = getUser(socket);
+    if (!user) {
+      throw new Error('유저가 존재하지 않습니다.');
     }
 
     const opponent = game.users.find((user) => user.socket !== socket);
     if (!opponent) {
       throw new Error('상대 유저가 존재하지 않습니다.');
+    }
+
+    const tower = game.getTower(user, towerId);
+    if (!tower) {
+      throw new Error('해당 타워가 존재하지 않습니다.');
+    }
+
+    const monster = game.getMonster(user, monsterId);
+    if (!monster) {
+      console.warn(`Warning: 몬스터 ${monsterId}가 이미 제거되었거나 존재하지 않습니다.`);
+      return;
     }
 
     const towerAttackData = {

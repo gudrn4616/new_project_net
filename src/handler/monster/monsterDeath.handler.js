@@ -22,13 +22,13 @@ const monsterDeathHandler = (socket, payload) => {
       throw new Error('상대 유저가 존재하지 않습니다.');
     }
 
-    const monster = game.getMonster(socket, monsterId);
+    const monster = game.getMonster(user, monsterId);
     if (!monster) {
       console.warn(`Warning: 몬스터 ${monsterId}가 이미 제거되었거나 존재하지 않습니다.`);
       return;
     }
 
-    game.removeMonster(socket, monsterId);
+    game.removeMonster(user, monsterId);
 
     const enemyMonsterDeathPayload = {
       monsterId: monsterId,

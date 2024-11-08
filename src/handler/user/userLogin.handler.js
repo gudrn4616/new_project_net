@@ -59,7 +59,7 @@ const userLoginHandler = async (socket, payload) => {
       failCode: 0,
     };
 
-    const userSession = await addUser(socket, user);
+    const userSession = await addUser(socket, user.account_id, user.user_id, 0);
 
     const response = createResponse(responsePayload, userSession, PacketType.LOGIN_RESPONSE);
 

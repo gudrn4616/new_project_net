@@ -1,10 +1,10 @@
+import { v4 as uuidv4 } from 'uuid';
 import { getGameSession } from '../../session/game.session.js';
 import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/packetTypes.js';
 import { createNotificationPacket } from '../../utils/notification/game.notification.js';
 
-let tmpId = 1;
-
+let cnt = 1;
 const monsterSpawnHandler = async (socket, payload) => {
   try {
     const gameSession = getGameSession(socket);
@@ -22,14 +22,14 @@ const monsterSpawnHandler = async (socket, payload) => {
       throw new Error('상대 유저가 존재하지 않습니다.');
     }
 
-    const randomMonsterId = Math.floor(Math.random() * 5) + 1;
+    const randomMonsterNumber = Math.floor(Math.random() * 5) + 1;
 
     // 게임 세션에 몬스터 추가
-    gameSession.addMonster(socket, tmpId, randomMonsterId, gameSession.monsterLevel[socket]);
+    gameSession.addMonster(user, cnt, randomMonsterNumber, gameSession.monsterLevel[user.id]);
 
     const monsterSpawnResponseData = {
-      monsterId: tmpId++,
-      monsterNumber: randomMonsterId,
+      monsterId: cnt++,
+      monsterNumber: randomMonsterNumber,
     };
 
     const monsetSpawnResponse = await createResponse(
