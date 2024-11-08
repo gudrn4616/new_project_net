@@ -3,7 +3,7 @@ import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/packetTypes.js';
 import { createNotificationPacket } from '../../utils/notification/game.notification.js';
 
-let cnt = 1;
+let tmpId = 0;
 
 export const monsterSpawnHandler = async (socket, payload) => {
   try {
@@ -24,8 +24,11 @@ export const monsterSpawnHandler = async (socket, payload) => {
 
     const randomMonsterId = Math.floor(Math.random() * 5) + 1;
 
+    // 게임 세션에 몬스터 추가
+    gameSession.addMonster(socket, tmpId, randomMonsterId, gameSession.monsterLevel[socket]);
+
     const monsterSpawnResponseData = {
-      monsterId: cnt++,
+      monsterId: tmpId++,
       monsterNumber: randomMonsterId,
     };
 
@@ -36,7 +39,6 @@ export const monsterSpawnHandler = async (socket, payload) => {
     );
 
     socket.write(monsetSpawnResponse);
-    //opponent.socket.write(createSpawnEnemyMonsterPacket(monsterSpawnResponseData));
     opponent.socket.write(
       createNotificationPacket(
         monsterSpawnResponseData,
