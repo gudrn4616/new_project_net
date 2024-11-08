@@ -4,17 +4,17 @@ import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/packetTypes.js';
 
 // 기지 체력 업데이트 알림 함수
-const notificationBaseHealthUpdate = (user, baseHealth) => {
+const notificationBaseHealthUpdate = (user, baseHealth, isenemy) => {
   const responsePayload = {
-    updateBaseHpNotification: {
-      baseHealth,
-    },
+    isenemy,
+    baseHealth,
   };
 
   const response = createResponse(responsePayload, user, PacketType.UPDATE_BASE_HP_NOTIFICATION);
 
   console.log(`기지 체력 업데이트 알림 패킷 전송: ${response}`);
 
+  // 피아식별 구분
   user.socket.write(response);
 };
 
@@ -38,7 +38,7 @@ export const monsterAttackBaseHandler = async (socket, packet) => {
     console.log('Received packet:', JSON.stringify(packet, null, 2)); // 디버깅용 패킷 전체 출력
 
     // 패킷의 속성 직접 확인
-    const { damage } = packet; // packet.payload가 아니라 packet 자체에서 데이터 추출
+    const { damage } = packet;
     if (damage === undefined) {
       console.error(
         `Invalid packet: damage is missing. Packet: ${JSON.stringify(packet, null, 2)}`,
@@ -46,25 +46,26 @@ export const monsterAttackBaseHandler = async (socket, packet) => {
       return;
     }
 
-    console.log(`기지 공격 요청 - Damage: ${damage}`);
-
     const baseHp = game.baseHp[currentUser.socket];
     if (typeof baseHp === 'undefined') {
       console.error('기지 체력 정보를 찾을 수 없습니다.');
       return;
     }
 
+    console.log(`기지 공격 요청 - Current Base HP: ${baseHp}, Damage: ${damage}`);
+
     // 현재 사용자의 기지 체력 업데이트
     game.baseHp[currentUser.socket] -= damage;
     if (game.baseHp[currentUser.socket] < 0) game.baseHp[currentUser.socket] = 0;
+    console.log('baseHp: ', game.baseHp, game.baseHp[currentUser.socket] < 0);
 
     // 현재 유저에게 기지 체력 업데이트 알림 전송
-    notificationBaseHealthUpdate(currentUser, game.baseHp[currentUser.socket]);
+    notificationBaseHealthUpdate(currentUser, game.baseHp[currentUser.socket], false);
 
     // 상대 유저에게도 기지 체력 업데이트 알림 전송
     const opponent = game.users.find((user) => user.socket !== currentUser.socket);
     if (opponent) {
-      notificationBaseHealthUpdate(opponent, game.baseHp[currentUser.socket]);
+      notificationBaseHealthUpdate(opponent, game.baseHp[currentUser.socket], true);
     }
   } catch (err) {
     console.error('기지 공격 처리 중 에러 발생:', err);
