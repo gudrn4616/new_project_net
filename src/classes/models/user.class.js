@@ -19,8 +19,8 @@ class User {
     return this.playerId;
   }
 
-  getNextSequence() {
-    return ++this.sequence;
+  getSequence() {
+    return this.sequence++;
   }
 }
 
