@@ -56,6 +56,12 @@ export const matchHandler = async (socket, data) => {
       opponentData: game.getGameState(user2),
     };
 
+    const responsePayload2 = {
+      initialGameState: game.getInitialGameState(),
+      playerData: game.getGameState(user2),
+      opponentData: game.getGameState(user1),
+    };
+
     /*
     console.log('=================');
     console.log('게임 세션 수: ', getAllGameSession.length);
@@ -65,17 +71,12 @@ export const matchHandler = async (socket, data) => {
     console.log('=================');
     */
 
-    const responsePayload2 = {
-      initialGameState: game.getInitialGameState(),
-      playerData: game.getGameState(user2),
-      opponentData: game.getGameState(user1),
-    };
-
     const response1 = createResponse(responsePayload1, user1, PacketType.MATCH_START_NOTIFICATION);
     const response2 = createResponse(responsePayload2, user2, PacketType.MATCH_START_NOTIFICATION);
     user1.socket.write(response1);
     user2.socket.write(response2);
-    return;
+
+    game.stateSync();
   }
 
   return null;

@@ -1,9 +1,13 @@
 import { initialGameState, playerData } from '../../asset/initialGameState.js';
+import stateSyncNotificationHandler from '../../handler/stateSync/stateSyncNotification.handler.js';
+import IntervalManager from '../managers/interval.manager.js';
 import Monster from './monster.class.js';
 import Tower from './tower.class.js';
 
 class Game {
   constructor(user1, user2) {
+    this.intervalManager = new IntervalManager();
+
     const user1Id = user1.id;
     const user2Id = user2.id;
 
@@ -124,6 +128,19 @@ class Game {
     this.monsters[user.id] = this.monsters[user.id].filter(
       (monster) => monster.monsterId !== monsterId,
     );
+  }
+
+  stateSync() {
+    this.users.forEach((user) => {
+      const interval = 1000;
+
+      this.intervalManager.addUser(
+        user.id,
+        () => stateSyncNotificationHandler(user),
+        interval,
+        'user',
+      );
+    });
   }
 }
 

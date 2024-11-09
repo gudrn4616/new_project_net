@@ -1,6 +1,5 @@
 import createHeader from '../createHeader.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
-import { PacketType } from '../../constants/packetTypes.js';
 import { PayloadName } from '../../constants/packetTypes.js';
 
 const makeNotification = (message, packetType, sequence) => {
