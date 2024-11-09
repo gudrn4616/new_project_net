@@ -56,14 +56,12 @@ export const matchHandler = async (socket, data) => {
       opponentData: game.getGameState(user2),
     };
 
-    /*
     console.log('=================');
     console.log('게임 세션 수: ', getAllGameSession.length);
     console.log('게임 세션: ', game);
     console.log('User1: =', game.getGameState(user1));
     console.log('User2: =', game.getGameState(user2));
     console.log('=================');
-    */
 
     const responsePayload2 = {
       initialGameState: game.getInitialGameState(),

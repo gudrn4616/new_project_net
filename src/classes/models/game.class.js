@@ -91,7 +91,7 @@ class Game {
     const towers = this.towers[user.id];
 
     if (towers) {
-      return towers.find((tower) => tower.id === towerId) || null;
+      return towers.find((tower) => tower.towerId === towerId) || null;
     }
 
     return null;
@@ -99,7 +99,7 @@ class Game {
 
   addTower(user, id, x, y) {
     const newTower = new Tower(user.socket, id, x, y);
-    this.towers[user.id].push({ id: newTower.id, x: newTower.x, y: newTower.y });
+    this.towers[user.id].push({ towerId: newTower.id, x: newTower.x, y: newTower.y });
   }
 
   getMonster(user, monsterId) {
