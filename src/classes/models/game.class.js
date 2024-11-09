@@ -105,7 +105,7 @@ class Game {
   getMonster(user, monsterId) {
     const monsters = this.monsters[user.id];
     if (monsters) {
-      return monsters.find((monster) => monster.id === monsterId) || null;
+      return monsters.find((monster) => monster.monsterId === monsterId) || null;
     }
 
     return null;
@@ -113,11 +113,17 @@ class Game {
 
   addMonster(user, id, number, level) {
     const newMonster = new Monster(user.socket, id, number, level);
-    this.monsters[user.id].push(newMonster);
+    this.monsters[user.id].push({
+      monsterId: newMonster.id,
+      monsterNumber: newMonster.number,
+      level: newMonster.level,
+    });
   }
 
   removeMonster(user, monsterId) {
-    this.monsters[user.id] = this.monsters[user.id].filter((monster) => monster.id !== monsterId);
+    this.monsters[user.id] = this.monsters[user.id].filter(
+      (monster) => monster.monsterId !== monsterId,
+    );
   }
 }
 
