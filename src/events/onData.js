@@ -38,6 +38,7 @@ export const onData = (socket) => async (data) => {
     // 페이로드 길이 읽기 (4바이트)
     const payloadLength = socket.buffer.readUInt32BE(offset);
     offset += config.packet.header.payloadLength;
+
     if (socket.buffer.length >= offset + payloadLength) {
       const gamePacket = socket.buffer.subarray(offset, offset + payloadLength);
       socket.buffer = socket.buffer.subarray(offset + payloadLength);
