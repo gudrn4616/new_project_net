@@ -108,7 +108,7 @@ export const endGameHandler = (socket) => {
 
     const responses = [currentUser, opponent].map((user, index) => {
       const isWin = index === 0 ? isCurrentUserWin : isOpponentWin;
-      return createResponse({ isWin }, user, PacketType.C2SGameEndRequest);
+      return createResponse({ isWin }, user, PacketType.GAME_OVER_NOTIFICATION);
     });
 
     currentUser.socket.write(responses[0]);
