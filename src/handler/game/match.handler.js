@@ -83,58 +83,35 @@ export const matchHandler = async (socket, data) => {
 
 // 게임 종료 처리
 export const endGameHandler = (socket) => {
-  /*
   const currentUser = getUser(socket);
-  if (!currentUser) {
-    return;
-  }
+  if (!currentUser) return;
 
-  // 게임 세션 가져오기
-  const gameSession = getGameSession(socket);
-  if (!gameSession) {
-    return;
-  }
-  // 게임 세션에서 상대방 찾기
-  const opponent = gameSession.users.find((user) => user.socket !== socket);
-  endGameQueue.add(currentUser);
+  const gameSession = getGameSession(currentUser);
+  if (!gameSession) return;
+
+  const opponent = gameSession.users.find((user) => user.id !== currentUser.id);
+  addEndGameQueue(currentUser);
+  let endGameQueue = getEndGameQueue();
+
   if (endGameQueue.has(currentUser) && endGameQueue.has(opponent)) {
-    // 승패 결정
-    const currentUserHp = gameSession.baseHp[currentUser.socket];
-    const opponentHp = gameSession.baseHp[opponent.socket];
+    const currentUserHp = gameSession.baseHp[currentUser.id];
+    const opponentHp = gameSession.baseHp[opponent.id];
+    const isCurrentUserWin = opponentHp <= 0;
+    const isOpponentWin = currentUserHp <= 0;
 
-    if (currentUserHp === 0) isCurrentUserWin = true;
-    else if (opponentHp === 0) isCurrentUserWin = false;
+    [currentUser, opponent].forEach((user) => {
+      if (getInGameUsers().has(user)) removeInGameUser(user);
+      removeEndGameQueue(user);
+    });
 
-    // 게임 중인 유저 목록에서 제거
-    if (inGameUsers.has(currentUser)) {
-      inGameUsers.delete(currentUser);
-    }
+    removeGameSession(currentUser);
 
-    // 상대방도 게임 중인 유저 목록에서 제거
-    if (opponent && inGameUsers.has(opponent)) {
-      inGameUsers.delete(opponent);
-    }
+    const responses = [currentUser, opponent].map((user, index) => {
+      const isWin = index === 0 ? isCurrentUserWin : isOpponentWin;
+      return createResponse({ isWin }, user, PacketType.C2SGameEndRequest);
+    });
 
-    // 게임 세션 제거
-    removeGameSession(socket);
-    endGameQueue.delete(currentUser);
-    endGameQueue.delete(opponent);
-
-    // 게임 종료 패킷 생성 및 전송
-    const responsePayload1 = {
-      C2SGameEndRequest: {
-        isWin: isCurrentUserWin,
-      },
-    };
-    const responsePayload2 = {
-      C2SGameEndRequest: {
-        isWin: !isCurrentUserWin,
-      },
-    };
-    const response1 = createResponse(responsePayload1, PacketType.C2SGameEndRequest);
-    const response2 = createResponse(responsePayload2, PacketType.C2SGameEndRequest);
-    currentUser.socket.write(response1);
-    opponent.socket.write(response2);
+    currentUser.socket.write(responses[0]);
+    opponent.socket.write(responses[1]);
   }
-  */
 };

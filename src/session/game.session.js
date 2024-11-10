@@ -10,9 +10,9 @@ export const addGameSession = (user1, user2) => {
 };
 
 // 게임 세션 제거
-export const removeGameSession = (socket) => {
+export const removeGameSession = (user) => {
   const index = gameSessions.findIndex(
-    (session) => session.users[0].socket === socket || session.users[1].socket === socket,
+    (session) => session.users[0].id === user.id || session.users[1].id === user.id,
   );
   if (index !== -1) {
     return gameSessions.splice(index, 1)[0];
@@ -20,9 +20,9 @@ export const removeGameSession = (socket) => {
 };
 
 // 게임 세션 조회
-export const getGameSession = (socket) => {
+export const getGameSession = (user) => {
   return gameSessions.find(
-    (session) => session.users[0].socket === socket || session.users[1].socket === socket,
+    (session) => session.users[0].id === user.id || session.users[1].id === user.id,
   );
 };
 
@@ -34,36 +34,36 @@ export const getWaitingQueue = () => {
   return waitingQueue;
 };
 
-export const addWaitingQueue = (socket) => {
-  waitingQueue.add(socket);
+export const addWaitingQueue = (user) => {
+  waitingQueue.add(user);
 };
 
-export const removeWaitingQueue = (socket, socket2) => {
-  waitingQueue.delete(socket);
-  waitingQueue.delete(socket2);
+export const removeWaitingQueue = (user1, user2) => {
+  waitingQueue.delete(user1);
+  waitingQueue.delete(user2);
 };
 
 export const getInGameUsers = () => {
   return inGameUsers;
 };
 
-export const addInGameUser = (socket, socket2) => {
-  inGameUsers.add(socket);
-  inGameUsers.add(socket2);
+export const addInGameUser = (user1, user2) => {
+  inGameUsers.add(user1);
+  inGameUsers.add(user2);
 };
 
-export const removeInGameUser = (socket) => {
-  inGameUsers.delete(socket);
+export const removeInGameUser = (user) => {
+  inGameUsers.delete(user);
 };
 
 export const getEndGameQueue = () => {
   return endGameQueue;
 };
 
-export const addEndGameQueue = (socket) => {
-  endGameQueue.add(socket);
+export const addEndGameQueue = (user) => {
+  endGameQueue.add(user);
 };
 
-export const removeEndGameQueue = (socket) => {
-  endGameQueue.delete(socket);
+export const removeEndGameQueue = (user) => {
+  endGameQueue.delete(user);
 };
