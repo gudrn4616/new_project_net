@@ -14,14 +14,12 @@ const stateSyncNotification = (game, user) => {
     }
     */
 
-    const userGold = game.gold[user.id];
-    const baseHp = game.baseHp[user.id];
-    const monsterLevel = game.monsterLevel[user.id];
-    const score = game.score[user.id];
-    const towers = game.towers[user.id];
-    const monsters = game.monsters[user.id];
+    const payload = game.getStateSync(user);
 
-    const payload = { userGold, baseHp, monsterLevel, score, towers, monsters };
+    console.log('=============');
+    console.log(`user: ${user.id} - payload: ${JSON.stringify(payload.towers, null, 2)}`);
+    console.log('상태 동기화!');
+    console.log('=============');
 
     return createNotificationPacket(payload, PacketType.STATE_SYNC_NOTIFICATION);
   } catch (err) {

@@ -91,6 +91,17 @@ class Game {
     };
   }
 
+  getStateSync(user) {
+    return {
+      userGold: this.gold[user.id],
+      baseHp: this.baseHp[user.id],
+      monsterLevel: this.monsterLevel[user.id],
+      score: this.score[user.id],
+      towers: [...this.towers[user.id]],
+      monsters: [...this.monsters[user.id]],
+    };
+  }
+
   getTower(user, towerId) {
     const towers = this.towers[user.id];
 
