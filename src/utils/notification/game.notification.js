@@ -8,28 +8,6 @@ const makeNotification = (message, packetType, sequence) => {
   return Buffer.concat([header, message]);
 };
 
-/*
-export const createSpawnMonsterPacket = (payload) => {
-  const protoMessages = getProtoMessages();
-  const response = protoMessages.gamePacket.GamePacket;
-
-  const responsePacket = response.encode({ spawnMonsterResponse: payload }).finish();
-
-  return makeNotification(responsePacket, PacketType.SPAWN_MONSTER_RESPONSE, 0);
-};
-*/
-
-/*
-export const createSpawnEnemyMonsterPacket = (payload) => {
-  const protoMessages = getProtoMessages();
-  const response = protoMessages.gamePacket.GamePacket;
-
-  const responsePacket = response.encode({ spawnEnemyMonsterNotification: payload }).finish();
-
-  return makeNotification(responsePacket, PacketType.SPAWN_ENEMY_MONSTER_NOTIFICATION, 0);
-};
-*/
-
 export const createNotificationPacket = (payload, packetType, sequence) => {
   const protoMessages = getProtoMessages();
   const notification = protoMessages.gamePacket.GamePacket;

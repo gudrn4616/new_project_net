@@ -16,7 +16,7 @@ export const onEnd = (socket) => async () => {
 
   if (getEndGameQueue().has(user) || getInGameUsers().has(user)) {
     const payload = { trigger: 1 };
-    endGameHandler(socket, payload);
+    await endGameHandler(socket, payload);
   }
 
   removeUser(socket);

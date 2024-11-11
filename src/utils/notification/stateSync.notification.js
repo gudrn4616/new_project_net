@@ -5,25 +5,7 @@ const packetType = config.packet.type;
 
 const stateSyncNotification = (game, user) => {
   try {
-    /*
-    message S2CStateSyncNotification {
-      int32 userGold = 1;
-      int32 baseHp = 2;
-      int32 monsterLevel = 3;
-      int32 score = 4;
-      repeated TowerData towers = 5;
-      repeated MonsterData monsters = 6;
-    }
-    */
-
     const payload = game.getStateSync(user);
-
-    /*
-    console.log('=============');
-    console.log(`user: ${user.id} - payload: ${JSON.stringify(payload.towers, null, 2)}`);
-    console.log('상태 동기화!');
-    console.log('=============');
-    */
 
     return createNotificationPacket(
       payload,

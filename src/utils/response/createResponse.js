@@ -15,7 +15,6 @@ const createResponse = (responsePayload, user, packetType) => {
   }
 
   const header = createHeader(payloadBuffer.length, packetType, user.getSequence());
-  //console.log('sequence: ', user.getSequence());
 
   return Buffer.concat([header, payloadBuffer]);
 };
