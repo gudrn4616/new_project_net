@@ -172,6 +172,22 @@ class Game {
       this.users.splice(userIndex, 1);
     }
   }
+
+  getScore(user) {
+    const userIndex = this.users.findIndex((i) => i === user);
+
+    if (userIndex !== -1) {
+      return this.score[user.id];
+    }
+  }
+
+  upgradeLevel(user) {
+    const userIndex = this.users.findIndex((i) => i === user);
+
+    if (userIndex === -1) return;
+
+    this.monsterLevel[user.id]++;
+  }
 }
 
 export default Game;
