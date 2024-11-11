@@ -22,7 +22,7 @@ const createPool = (dbConfig) => {
     const date = new Date();
 
     console.log(
-      `[${formatDate(date)}] 쿼리 실행 중: ${sql} ${params ? `, ${JSON.stringify(params)}` : ''}`,
+      `[${formatDate(date)}] 쿼리 실행 중: ${sql} ${params ? `, ${JSON.stringify(params)}` :''}`,
     );
 
     return originalQuery.call(pool, sql, params); //원래 함수 호출
