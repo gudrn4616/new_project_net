@@ -5,7 +5,7 @@ import { createNotificationPacket } from '../../utils/notification/game.notifica
 import createResponse from '../../utils/response/createResponse.js';
 
 let tmpId = 3;
-const towerPurchaseHandler = (socket, payload) => {
+const towerPurchaseHandler = async (socket, payload) => {
   try {
     const { x, y } = payload;
 
@@ -30,16 +30,8 @@ const towerPurchaseHandler = (socket, payload) => {
       throw new Error('이미 존재하는 타워입니다.');
     }
 
-    game.addTower(user, tmpId, x, y);
-    const tower = game.getTower(user, tmpId++);
-
-    const responseData = { towerId: tower.id };
-    const towerPurchaseResponse = createResponse(
-      responseData,
-      user,
-      PacketType.TOWER_PURCHASE_RESPONSE,
-    );
-    socket.write(towerPurchaseResponse);
+    await game.addTower(user, tmpId, x, y);
+    const tower = await game.getTower(user, tmpId++);
 
     const notificationData = { towerId: tower.id, x, y };
     const addEnemyTowerNotification = createNotificationPacket(
@@ -48,6 +40,14 @@ const towerPurchaseHandler = (socket, payload) => {
       opponent.getSequence(),
     );
     opponent.socket.write(addEnemyTowerNotification);
+
+    const responseData = { towerId: tower.id };
+    const towerPurchaseResponse = createResponse(
+      responseData,
+      user,
+      PacketType.TOWER_PURCHASE_RESPONSE,
+    );
+    socket.write(towerPurchaseResponse);
   } catch (err) {
     console.error('타워 구매 중 에러 발생:', err);
   }
