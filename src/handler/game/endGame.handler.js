@@ -13,7 +13,10 @@ import { getUser } from '../../session/user.session.js';
 import { createNotificationPacket } from '../../utils/notification/game.notification.js';
 
 // 게임 종료 처리
-export const endGameHandler = async (socket, trigger = 0) => {
+const endGameHandler = async (socket, payload) => {
+  let { trigger } = payload;
+  if (!trigger) trigger = 0;
+
   const currentUser = getUser(socket);
   if (!currentUser) return;
 
@@ -35,6 +38,10 @@ export const endGameHandler = async (socket, trigger = 0) => {
       const opponentHp = gameSession.baseHp[opponent.id];
       isCurrentUserWin = opponentHp <= 0;
       isOpponentWin = currentUserHp <= 0;
+
+      console.log('===========================');
+      console.log('이거 실행중!!!!!!!!!!!!');
+      console.log('===========================');
     } else if (trigger === 1) {
       isCurrentUserWin = false;
       isOpponentWin = true;
@@ -89,3 +96,5 @@ export const endGameHandler = async (socket, trigger = 0) => {
     }
   }
 };
+
+export default endGameHandler;

@@ -14,7 +14,7 @@ import {
   removeEndGameQueue,
 } from '../../session/game.session.js';
 
-export const matchHandler = async (socket, data) => {
+const matchHandler = async (socket, data) => {
   // 현재 유저 가져오기
   console.log('매칭 요청:');
   const currentUser = getUser(socket);
@@ -81,3 +81,5 @@ export const matchHandler = async (socket, data) => {
 
   return null;
 };
+
+export default matchHandler;

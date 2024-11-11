@@ -1,4 +1,4 @@
-import { endGameHandler } from '../handler/game/endGame.handler.js';
+import endGameHandler from '../handler/game/endGame.handler.js';
 import {
   getEndGameQueue,
   getInGameUsers,
@@ -15,7 +15,8 @@ export const onEnd = (socket) => async () => {
   }
 
   if (getEndGameQueue().has(user) || getInGameUsers().has(user)) {
-    endGameHandler(socket, 1);
+    const payload = { trigger: 1 };
+    endGameHandler(socket, payload);
   }
 
   removeUser(socket);

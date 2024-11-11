@@ -1,13 +1,13 @@
 import userRegisterHandler from './user/userRegister.handler.js';
 import userLoginHandler from './user/userLogin.handler.js';
-import { matchHandler } from './game/match.handler.js';
 import { PacketType } from '../constants/packetTypes.js';
 import towerAttackHandler from './tower/towerAttack.handler.js';
 import monsterDeathHandler from './monster/monsterDeath.handler.js';
 import monsterAttackBaseHandler from './game/baseAttackHandler.js';
 import monsterSpawnHandler from './monster/spawnMonster.handler.js';
 import towerPurchaseHandler from './tower/towerPurchase.handler.js';
-import { endGameHandler } from './game/endGame.handler.js';
+import endGameHandler from './game/endGame.handler.js';
+import matchHandler from './game/match.handler.js';
 
 const handlers = {
   [PacketType.REGISTER_REQUEST]: {
