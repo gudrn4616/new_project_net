@@ -14,7 +14,13 @@ export const removeGameSessionbyUser = (user) => {
   const index = gameSessions.findIndex(
     (session) => session.users[0].id === user.id || session.users[1].id === user.id,
   );
+
   if (index !== -1) {
+    const opponent = gameSessions[index].users.find((i) => i.id !== user.id);
+
+    gameSessions[index].removeUser(user.socket);
+    gameSessions[index].removeUser(opponent.socket);
+
     return gameSessions.splice(index, 1)[0];
   }
 };

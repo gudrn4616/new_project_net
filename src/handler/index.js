@@ -7,6 +7,7 @@ import monsterDeathHandler from './monster/monsterDeath.handler.js';
 import monsterAttackBaseHandler from './game/baseAttackHandler.js';
 import monsterSpawnHandler from './monster/spawnMonster.handler.js';
 import towerPurchaseHandler from './tower/towerPurchase.handler.js';
+import { endGameHandler } from './game/endGame.handler.js';
 
 const handlers = {
   [PacketType.REGISTER_REQUEST]: {
@@ -40,6 +41,10 @@ const handlers = {
   [PacketType.TOWER_PURCHASE_REQUEST]: {
     handler: towerPurchaseHandler,
     prototype: 'gamePacket.C2STowerPurchaseRequest',
+  },
+  [PacketType.GAME_END_REQUEST]: {
+    handler: endGameHandler,
+    prototype: 'gamePacket.C2SGameEndRequest',
   },
 };
 

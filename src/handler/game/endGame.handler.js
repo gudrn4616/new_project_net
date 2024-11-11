@@ -1,3 +1,4 @@
+import { PacketType } from '../../constants/packetTypes.js';
 import { createWOL, findWOLById, updateWOL } from '../../db/game/wol.db.js';
 import {
   addEndGameQueue,
@@ -9,6 +10,7 @@ import {
   removeInGameUser,
 } from '../../session/game.session.js';
 import { getUser } from '../../session/user.session.js';
+import { createNotificationPacket } from '../../utils/notification/game.notification.js';
 
 // 게임 종료 처리
 export const endGameHandler = async (socket, trigger = 0) => {
@@ -43,14 +45,15 @@ export const endGameHandler = async (socket, trigger = 0) => {
       removeEndGameQueue(user);
     });
 
-    game.removeUser(socket);
-    game.removeUser(opponent.socket);
-
     removeGameSessionbyUser(currentUser);
 
     const responses = [currentUser, opponent].map((user, index) => {
       const isWin = index === 0 ? isCurrentUserWin : isOpponentWin;
-      return createResponse({ isWin }, user, PacketType.GAME_OVER_NOTIFICATION);
+      return createNotificationPacket(
+        { isWin },
+        PacketType.GAME_OVER_NOTIFICATION,
+        user.getSequence(),
+      );
     });
 
     currentUser.socket.write(responses[0]);
