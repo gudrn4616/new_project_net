@@ -41,10 +41,10 @@ const matchHandler = async (socket) => {
     let game = getGameSession(socket) || addGameSession(user1, user2);
 
     const towers = [
-      { user: user1, id: 1, x: 900, y: 300 },
-      { user: user1, id: 2, x: 700, y: 300 },
-      { user: user2, id: 3, x: 900, y: 300 },
-      { user: user2, id: 4, x: 1100, y: 300 },
+      { user: user1, id: 1, x: 700, y: 300 },
+      { user: user1, id: 2, x: 1100, y: 300 },
+      { user: user2, id: 3, x: 700, y: 300 },
+      { user: user2, id: 4, x: 900, y: 300 },
     ];
 
     towers.forEach(({ user, id, x, y }) => game.addTower(user, id, x, y));

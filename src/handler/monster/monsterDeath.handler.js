@@ -35,7 +35,7 @@ const monsterDeathHandler = (socket, payload) => {
     game.score[user.id] += 100;
 
     const score = game.getScore(user);
-    if (score == 200) game.upgradeLevel(user);
+    if (score == 300) game.upgradeLevel(user);
     console.log(game.monsterLevel[user.id]);
 
     const enemyMonsterDeathPayload = {
