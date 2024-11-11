@@ -1,6 +1,5 @@
 import { endGameHandler } from '../handler/game/endGame.handler.js';
 import {
-  exitGameSession,
   getEndGameQueue,
   getInGameUsers,
   getWaitingQueue,
@@ -19,6 +18,5 @@ export const onEnd = (socket) => async () => {
     endGameHandler(socket, 1);
   }
 
-  exitGameSession(socket);
   removeUser(socket);
 };

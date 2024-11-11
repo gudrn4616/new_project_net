@@ -43,6 +43,9 @@ export const endGameHandler = async (socket, trigger = 0) => {
       removeEndGameQueue(user);
     });
 
+    game.removeUser(socket);
+    game.removeUser(opponent.socket);
+
     removeGameSessionbyUser(currentUser);
 
     const responses = [currentUser, opponent].map((user, index) => {
