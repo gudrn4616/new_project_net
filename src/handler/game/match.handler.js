@@ -1,8 +1,10 @@
 import { getUser } from '../../session/user.session.js';
-import { addGameSession, getAllGameSession, getGameSession } from '../../session/game.session.js';
 import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/packetTypes.js';
 import {
+  addGameSession,
+  removeGameSession,
+  getGameSession,
   getWaitingQueue,
   addWaitingQueue,
   removeWaitingQueue,
@@ -13,6 +15,7 @@ import {
   addEndGameQueue,
   removeEndGameQueue,
 } from '../../session/game.session.js';
+import { createWOL, findWOLById, updateWOL } from '../../db/game/wol.db.js';
 
 export const matchHandler = async (socket, data) => {
   // 현재 유저 가져오기
@@ -82,7 +85,7 @@ export const matchHandler = async (socket, data) => {
 };
 
 // 게임 종료 처리
-export const endGameHandler = (socket) => {
+export const endGameHandler = async (socket, trigger = 0) => {
   const currentUser = getUser(socket);
   if (!currentUser) return;
 
@@ -91,13 +94,21 @@ export const endGameHandler = (socket) => {
 
   const opponent = gameSession.users.find((user) => user.id !== currentUser.id);
   addEndGameQueue(currentUser);
+  addEndGameQueue(opponent);
   let endGameQueue = getEndGameQueue();
 
   if (endGameQueue.has(currentUser) && endGameQueue.has(opponent)) {
-    const currentUserHp = gameSession.baseHp[currentUser.id];
-    const opponentHp = gameSession.baseHp[opponent.id];
-    const isCurrentUserWin = opponentHp <= 0;
-    const isOpponentWin = currentUserHp <= 0;
+    let isCurrentUserWin, isOpponentWin;
+
+    if (trigger === 0) {
+      const currentUserHp = gameSession.baseHp[currentUser.id];
+      const opponentHp = gameSession.baseHp[opponent.id];
+      isCurrentUserWin = opponentHp <= 0;
+      isOpponentWin = currentUserHp <= 0;
+    } else if (trigger === 1) {
+      isCurrentUserWin = false;
+      isOpponentWin = true;
+    }
 
     [currentUser, opponent].forEach((user) => {
       if (getInGameUsers().has(user)) removeInGameUser(user);
@@ -113,5 +124,34 @@ export const endGameHandler = (socket) => {
 
     currentUser.socket.write(responses[0]);
     opponent.socket.write(responses[1]);
+
+    // 게임 결과 기록
+    let currentUserWOL = await findWOLById(currentUser.id);
+    let opponentWOL = await findWOLById(opponent.id);
+
+    if (!currentUserWOL) {
+      await createWOL(currentUser.id, 0, 0);
+      currentUserWOL = { victory_count: 0, defeat_count: 0 };
+    }
+    if (!opponentWOL) {
+      await createWOL(opponent.id, 0, 0);
+      opponentWOL = { victory_count: 0, defeat_count: 0 };
+    }
+
+    if (isCurrentUserWin) {
+      await updateWOL(
+        currentUser.id,
+        currentUserWOL.victory_count + 1,
+        currentUserWOL.defeat_count,
+      );
+      await updateWOL(opponent.id, opponentWOL.victory_count, opponentWOL.defeat_count + 1);
+    } else if (isOpponentWin) {
+      await updateWOL(
+        currentUser.id,
+        currentUserWOL.victory_count,
+        currentUserWOL.defeat_count + 1,
+      );
+      await updateWOL(opponent.id, opponentWOL.victory_count + 1, opponentWOL.defeat_count);
+    }
   }
 };
