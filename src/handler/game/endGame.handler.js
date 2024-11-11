@@ -16,8 +16,7 @@ const packetType = config.packet.type;
 
 // 게임 종료 처리
 const endGameHandler = async (socket, payload) => {
-  let { trigger } = payload;
-  if (!trigger) trigger = 0;
+  const trigger = payload.trigger || 0;
 
   const currentUser = getUser(socket);
   if (!currentUser) return;
@@ -30,20 +29,13 @@ const endGameHandler = async (socket, payload) => {
   addEndGameQueue(currentUser);
   addEndGameQueue(opponent);
 
-  let endGameQueue = getEndGameQueue();
+  const endGameQueue = getEndGameQueue();
 
   if (endGameQueue.has(currentUser) && endGameQueue.has(opponent)) {
-    let isCurrentUserWin, isOpponentWin;
-
-    if (trigger === 0) {
-      const currentUserHp = gameSession.baseHp[currentUser.id];
-      const opponentHp = gameSession.baseHp[opponent.id];
-      isCurrentUserWin = opponentHp <= 0;
-      isOpponentWin = currentUserHp <= 0;
-    } else if (trigger === 1) {
-      isCurrentUserWin = false;
-      isOpponentWin = true;
-    }
+    const currentUserHp = gameSession.baseHp[currentUser.id];
+    const opponentHp = gameSession.baseHp[opponent.id];
+    const isCurrentUserWin = trigger === 0 ? opponentHp <= 0 : false;
+    const isOpponentWin = trigger === 0 ? currentUserHp <= 0 : true;
 
     [currentUser, opponent].forEach((user) => {
       if (getInGameUsers().has(user)) removeInGameUser(user);
@@ -52,45 +44,34 @@ const endGameHandler = async (socket, payload) => {
 
     removeGameSessionbyUser(currentUser);
 
-    const responses = [currentUser, opponent].map((user, index) => {
+    [currentUser, opponent].forEach((user, index) => {
       const isWin = index === 0 ? isCurrentUserWin : isOpponentWin;
-      return createNotificationPacket(
+      const response = createNotificationPacket(
         { isWin },
         packetType.GAME_OVER_NOTIFICATION,
         user.getSequence(),
       );
+      user.socket.write(response);
     });
 
-    currentUser.socket.write(responses[0]);
-    opponent.socket.write(responses[1]);
-
     // 게임 결과 기록
-    let currentUserWOL = await findWOLById(currentUser.id);
-    let opponentWOL = await findWOLById(opponent.id);
-
-    if (!currentUserWOL) {
-      await createWOL(currentUser.id, 0, 0);
-      currentUserWOL = { victory_count: 0, defeat_count: 0 };
-    }
-    if (!opponentWOL) {
-      await createWOL(opponent.id, 0, 0);
-      opponentWOL = { victory_count: 0, defeat_count: 0 };
-    }
+    const [currentUserWOL, opponentWOL] = await Promise.all([
+      findWOLById(currentUser.id) ||
+        createWOL(currentUser.id, 0, 0).then(() => ({ victory_count: 0, defeat_count: 0 })),
+      findWOLById(opponent.id) ||
+        createWOL(opponent.id, 0, 0).then(() => ({ victory_count: 0, defeat_count: 0 })),
+    ]);
 
     if (isCurrentUserWin) {
-      await updateWOL(
-        currentUser.id,
-        currentUserWOL.victory_count + 1,
-        currentUserWOL.defeat_count,
-      );
-      await updateWOL(opponent.id, opponentWOL.victory_count, opponentWOL.defeat_count + 1);
+      await Promise.all([
+        updateWOL(currentUser.id, currentUserWOL.victory_count + 1, currentUserWOL.defeat_count),
+        updateWOL(opponent.id, opponentWOL.victory_count, opponentWOL.defeat_count + 1),
+      ]);
     } else if (isOpponentWin) {
-      await updateWOL(
-        currentUser.id,
-        currentUserWOL.victory_count,
-        currentUserWOL.defeat_count + 1,
-      );
-      await updateWOL(opponent.id, opponentWOL.victory_count + 1, opponentWOL.defeat_count);
+      await Promise.all([
+        updateWOL(currentUser.id, currentUserWOL.victory_count, currentUserWOL.defeat_count + 1),
+        updateWOL(opponent.id, opponentWOL.victory_count + 1, opponentWOL.defeat_count),
+      ]);
     }
   }
 };

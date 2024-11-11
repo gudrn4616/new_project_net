@@ -1,5 +1,5 @@
 import { getUser } from '../../session/user.session.js';
-import { addGameSession, getAllGameSession, getGameSession } from '../../session/game.session.js';
+import { addGameSession, getGameSession } from '../../session/game.session.js';
 import createResponse from '../../utils/response/createResponse.js';
 import {
   getWaitingQueue,
@@ -7,17 +7,12 @@ import {
   removeWaitingQueue,
   getInGameUsers,
   addInGameUser,
-  removeInGameUser,
-  getEndGameQueue,
-  addEndGameQueue,
-  removeEndGameQueue,
 } from '../../session/game.session.js';
 import { config } from '../../config/config.js';
 
 const packetType = config.packet.type;
 
-const matchHandler = async (socket, data) => {
-  // 현재 유저 가져오기
+const matchHandler = async (socket) => {
   console.log('매칭 요청:');
   const currentUser = getUser(socket);
   if (!currentUser) {
@@ -43,40 +38,34 @@ const matchHandler = async (socket, data) => {
     removeWaitingQueue(user1, user2);
     addInGameUser(user1, user2);
 
-    // 게임 인스턴스 생성
-    let game = getGameSession(socket);
-    if (!game) {
-      game = addGameSession(user1, user2);
-    }
+    let game = getGameSession(socket) || addGameSession(user1, user2);
 
-    game.addTower(user1, 1, 900, 300);
-    game.addTower(user1, 2, 700, 300);
-    game.addTower(user2, 3, 900, 300);
-    game.addTower(user2, 4, 1100, 300);
+    const towers = [
+      { user: user1, id: 1, x: 900, y: 300 },
+      { user: user1, id: 2, x: 700, y: 300 },
+      { user: user2, id: 3, x: 900, y: 300 },
+      { user: user2, id: 4, x: 1100, y: 300 },
+    ];
 
-    const responsePayload1 = {
+    towers.forEach(({ user, id, x, y }) => game.addTower(user, id, x, y));
+
+    const createPayload = (player, opponent) => ({
       initialGameState: game.getInitialGameState(),
-      playerData: game.getGameState(user1),
-      opponentData: game.getGameState(user2),
-    };
+      playerData: game.getGameState(player),
+      opponentData: game.getGameState(opponent),
+    });
 
-    const responsePayload2 = {
-      initialGameState: game.getInitialGameState(),
-      playerData: game.getGameState(user2),
-      opponentData: game.getGameState(user1),
-    };
+    const response1 = createResponse(
+      createPayload(user1, user2),
+      user1,
+      packetType.MATCH_START_NOTIFICATION,
+    );
+    const response2 = createResponse(
+      createPayload(user2, user1),
+      user2,
+      packetType.MATCH_START_NOTIFICATION,
+    );
 
-    /*
-    console.log('=================');
-    console.log('게임 세션 수: ', getAllGameSession.length);
-    console.log('게임 세션: ', game);
-    console.log('User1: =', game.getGameState(user1));
-    console.log('User2: =', game.getGameState(user2));
-    console.log('=================');
-    */
-
-    const response1 = createResponse(responsePayload1, user1, packetType.MATCH_START_NOTIFICATION);
-    const response2 = createResponse(responsePayload2, user2, packetType.MATCH_START_NOTIFICATION);
     user1.socket.write(response1);
     user2.socket.write(response2);
   }
