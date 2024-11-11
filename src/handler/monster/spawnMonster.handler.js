@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { getGameSession } from '../../session/game.session.js';
 import createResponse from '../../utils/response/createResponse.js';
 import { createNotificationPacket } from '../../utils/notification/game.notification.js';
@@ -51,14 +50,13 @@ const monsterSpawnHandler = async (socket, payload) => {
     );
   } catch (err) {
     console.error('몬스터 생성 중 에러 발생:', err);
-    /*
+    
     const errorResponse = createResponse(
       { spawnMonsterResponse: { success: false, message: 'Error spawning monster', failCode: 3 } },
       null,
-      PacketType.SPAWN_MONSTER_RESPONSE,
+      packetType.SPAWN_MONSTER_RESPONSE,
     );
     socket.write(errorResponse);
-    */
   }
 };
 

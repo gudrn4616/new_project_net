@@ -64,8 +64,6 @@ const notificationBaseHealthUpdate = (user, baseHealth, isOpponent) => {
     packetType.UPDATE_BASE_HP_NOTIFICATION,
     user.getSequence(),
   );
-
-  // 피아식별 구분
   user.socket.write(response);
 };
 
