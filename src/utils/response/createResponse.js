@@ -7,7 +7,7 @@ const createResponse = (responsePayload, user, packetType) => {
   const response = protoMessages.gamePacket.GamePacket;
 
   const payloadName = PayloadName[packetType];
-  console.log('payloadName: ', payloadName);
+  // console.log('payloadName: ', payloadName);
   const payloadBuffer = response.encode({ [payloadName]: responsePayload }).finish();
 
   if (typeof packetType === 'undefined') {
