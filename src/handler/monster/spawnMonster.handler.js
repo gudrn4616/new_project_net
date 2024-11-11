@@ -44,6 +44,7 @@ const monsterSpawnHandler = async (socket, payload) => {
       createNotificationPacket(
         monsterSpawnResponseData,
         PacketType.SPAWN_ENEMY_MONSTER_NOTIFICATION,
+        user.getSequence(),
       ),
     );
   } catch (err) {

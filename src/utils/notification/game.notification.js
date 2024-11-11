@@ -30,12 +30,12 @@ export const createSpawnEnemyMonsterPacket = (payload) => {
 };
 */
 
-export const createNotificationPacket = (payload, packetType) => {
+export const createNotificationPacket = (payload, packetType, sequence) => {
   const protoMessages = getProtoMessages();
   const notification = protoMessages.gamePacket.GamePacket;
 
   const payloadName = PayloadName[packetType];
   const notificationPacket = notification.encode({ [payloadName]: payload }).finish();
 
-  return makeNotification(notificationPacket, packetType, 0);
+  return makeNotification(notificationPacket, packetType, sequence);
 };

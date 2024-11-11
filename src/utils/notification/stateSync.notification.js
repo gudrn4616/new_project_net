@@ -21,7 +21,11 @@ const stateSyncNotification = (game, user) => {
     console.log('상태 동기화!');
     console.log('=============');
 
-    return createNotificationPacket(payload, PacketType.STATE_SYNC_NOTIFICATION);
+    return createNotificationPacket(
+      payload,
+      PacketType.STATE_SYNC_NOTIFICATION,
+      user.getSequence(),
+    );
   } catch (err) {
     console.error('상태 동기화 중 에러 발생:', err);
   }

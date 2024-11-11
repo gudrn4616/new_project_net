@@ -60,6 +60,7 @@ const notificationBaseHealthUpdate = (user, baseHealth, isOpponent) => {
   const response = createNotificationPacket(
     notificationPayload,
     PacketType.UPDATE_BASE_HP_NOTIFICATION,
+    user.getSequence(),
   );
 
   // 피아식별 구분

@@ -37,6 +37,7 @@ const monsterDeathHandler = (socket, payload) => {
     const notification = createNotificationPacket(
       enemyMonsterDeathPayload,
       PacketType.ENEMY_MONSTER_DEATH_NOTIFICATION,
+      user.getSequence(),
     );
 
     opponent.socket.write(notification);

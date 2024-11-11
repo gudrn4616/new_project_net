@@ -39,7 +39,11 @@ const towerAttackHandler = (socket, payload) => {
     };
 
     opponent.socket.write(
-      createNotificationPacket(towerAttackData, PacketType.ENEMY_TOWER_ATTACK_NOTIFICATION),
+      createNotificationPacket(
+        towerAttackData,
+        PacketType.ENEMY_TOWER_ATTACK_NOTIFICATION,
+        opponent.getSequence(),
+      ),
     );
   } catch (err) {
     console.error('타워 공격 중 에러 발생:', err);

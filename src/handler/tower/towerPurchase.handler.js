@@ -45,6 +45,7 @@ const towerPurchaseHandler = (socket, payload) => {
     const addEnemyTowerNotification = createNotificationPacket(
       notificationData,
       PacketType.ADD_ENEMY_TOWER_NOTIFICATION,
+      opponent.getSequence(),
     );
     opponent.socket.write(addEnemyTowerNotification);
   } catch (err) {
