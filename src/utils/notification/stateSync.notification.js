@@ -16,10 +16,12 @@ const stateSyncNotification = (game, user) => {
 
     const payload = game.getStateSync(user);
 
+    /*
     console.log('=============');
     console.log(`user: ${user.id} - payload: ${JSON.stringify(payload.towers, null, 2)}`);
     console.log('상태 동기화!');
     console.log('=============');
+    */
 
     return createNotificationPacket(
       payload,

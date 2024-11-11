@@ -75,8 +75,6 @@ const matchHandler = async (socket, data) => {
     const response2 = createResponse(responsePayload2, user2, PacketType.MATCH_START_NOTIFICATION);
     user1.socket.write(response1);
     user2.socket.write(response2);
-
-    game.stateSync();
   }
 
   return null;

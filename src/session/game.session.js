@@ -5,6 +5,7 @@ import { gameSessions, waitingQueue, inGameUsers, endGameQueue } from './session
 export const addGameSession = (user1, user2) => {
   const session = new Game(user1, user2);
   gameSessions.push(session);
+  session.stateSync();
 
   return session;
 };

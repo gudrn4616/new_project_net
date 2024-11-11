@@ -38,10 +38,6 @@ const endGameHandler = async (socket, payload) => {
       const opponentHp = gameSession.baseHp[opponent.id];
       isCurrentUserWin = opponentHp <= 0;
       isOpponentWin = currentUserHp <= 0;
-
-      console.log('===========================');
-      console.log('이거 실행중!!!!!!!!!!!!');
-      console.log('===========================');
     } else if (trigger === 1) {
       isCurrentUserWin = false;
       isOpponentWin = true;
