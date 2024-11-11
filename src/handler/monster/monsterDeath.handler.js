@@ -29,6 +29,8 @@ const monsterDeathHandler = (socket, payload) => {
     }
 
     game.removeMonster(user, monsterId);
+    game.gold[user.id] += 100;
+    game.score[user.id] += 100;
 
     const enemyMonsterDeathPayload = {
       monsterId: monsterId,

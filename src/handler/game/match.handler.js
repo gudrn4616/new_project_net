@@ -48,7 +48,9 @@ const matchHandler = async (socket, data) => {
     }
 
     game.addTower(user1, 1, 900, 300);
-    game.addTower(user2, 2, 900, 300);
+    game.addTower(user1, 2, 700, 300);
+    game.addTower(user2, 3, 900, 300);
+    game.addTower(user2, 4, 1100, 300);
 
     const responsePayload1 = {
       initialGameState: game.getInitialGameState(),

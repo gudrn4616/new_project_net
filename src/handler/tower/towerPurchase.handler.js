@@ -4,7 +4,7 @@ import { getUser } from '../../session/user.session.js';
 import { createNotificationPacket } from '../../utils/notification/game.notification.js';
 import createResponse from '../../utils/response/createResponse.js';
 
-let tmpId = 3;
+let tmpId = 5;
 const towerPurchaseHandler = async (socket, payload) => {
   try {
     const { x, y } = payload;
@@ -32,6 +32,8 @@ const towerPurchaseHandler = async (socket, payload) => {
 
     await game.addTower(user, tmpId, x, y);
     const tower = await game.getTower(user, tmpId++);
+
+    game.gold[user.id] -= 3000;
 
     const notificationData = { towerId: tower.id, x, y };
     const addEnemyTowerNotification = createNotificationPacket(
