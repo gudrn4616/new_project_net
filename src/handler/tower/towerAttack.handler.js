@@ -6,13 +6,13 @@ import { createNotificationPacket } from '../../utils/notification/game.notifica
 const towerAttackHandler = (socket, payload) => {
   try {
     const { towerId, monsterId } = payload;
-
-    const game = getGameSession(socket);
+    const currentUser = getUser(socket);
+    const game = getGameSession(currentUser);
     if (!game) {
       throw new Error('게임 세션이 존재하지 않습니다.');
     }
 
-    const user = getUser(socket);
+    const user = game.users.find((user) => user.socket === socket);
     if (!user) {
       throw new Error('유저가 존재하지 않습니다.');
     }

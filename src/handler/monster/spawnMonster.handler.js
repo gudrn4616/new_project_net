@@ -3,11 +3,12 @@ import { getGameSession } from '../../session/game.session.js';
 import createResponse from '../../utils/response/createResponse.js';
 import { PacketType } from '../../constants/packetTypes.js';
 import { createNotificationPacket } from '../../utils/notification/game.notification.js';
-
+import { getUser } from '../../session/user.session.js';
 let cnt = 1;
 const monsterSpawnHandler = async (socket, payload) => {
   try {
-    const gameSession = getGameSession(socket);
+    const currentUser = getUser(socket);
+    const gameSession = getGameSession(currentUser);
     if (!gameSession) {
       throw new Error('해당 유저의 게임 세션이 존재하지 않습니다.');
     }

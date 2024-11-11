@@ -2,7 +2,7 @@
 export const initialGameState = {
   baseHp: 100,
   towerCost: 100,
-  initialGold: 5000,
+  initialGold: 10000,
   monsterSpawnInterval: 5000,
 };
 
