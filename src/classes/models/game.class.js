@@ -153,6 +153,25 @@ class Game {
       );
     });
   }
+
+  getUsers() {
+    return this.users;
+  }
+
+  removeUser(socket) {
+    const userIndex = this.users.findIndex((user) => user.socket === socket);
+
+    if (userIndex !== -1) {
+      const userId = this.users[userIndex].id;
+
+      this.intervalManager.removeUser(userId);
+
+      delete this.towers[userId];
+      delete this.monsters[userId];
+
+      this.users.splice(userIndex, 1);
+    }
+  }
 }
 
 export default Game;

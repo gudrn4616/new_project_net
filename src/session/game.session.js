@@ -19,6 +19,16 @@ export const removeGameSession = (socket) => {
   }
 };
 
+export const exitGameSession = (socket) => {
+  const game = getGameSession(socket);
+  game.removeUser(socket);
+
+  const users = game.getUsers();
+  if (users.length === 0) {
+    removeGameSession(socket);
+  }
+};
+
 // 게임 세션 조회
 export const getGameSession = (socket) => {
   return gameSessions.find(
