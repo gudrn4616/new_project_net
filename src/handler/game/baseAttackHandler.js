@@ -12,7 +12,7 @@ const monsterAttackBaseHandler = async (socket, packet) => {
       return;
     }
 
-    const game = getGameSession(socket);
+    const game = getGameSession(currentUser);
     if (!game) {
       console.error('게임 세션이 존재하지 않습니다.');
       return;
