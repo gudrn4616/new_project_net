@@ -1,6 +1,5 @@
 import userRegisterHandler from './user/userRegister.handler.js';
 import userLoginHandler from './user/userLogin.handler.js';
-import { PacketType } from '../constants/packetTypes.js';
 import towerAttackHandler from './tower/towerAttack.handler.js';
 import monsterDeathHandler from './monster/monsterDeath.handler.js';
 import monsterAttackBaseHandler from './game/baseAttackHandler.js';
@@ -8,41 +7,44 @@ import monsterSpawnHandler from './monster/spawnMonster.handler.js';
 import towerPurchaseHandler from './tower/towerPurchase.handler.js';
 import endGameHandler from './game/endGame.handler.js';
 import matchHandler from './game/match.handler.js';
+import { config } from '../config/config.js';
+
+const packetType = config.packet.type;
 
 const handlers = {
-  [PacketType.REGISTER_REQUEST]: {
+  [packetType.REGISTER_REQUEST]: {
     handler: userRegisterHandler,
     prototype: 'gamePacket.C2SRegisterRequest',
   },
-  [PacketType.LOGIN_REQUEST]: {
+  [packetType.LOGIN_REQUEST]: {
     handler: userLoginHandler,
     prototype: 'gamePacket.C2SLoginRequest',
   },
-  [PacketType.MATCH_REQUEST]: {
+  [packetType.MATCH_REQUEST]: {
     handler: matchHandler,
     prototype: 'gamePacket.C2SMatchRequest',
   },
-  [PacketType.SPAWN_MONSTER_REQUEST]: {
+  [packetType.SPAWN_MONSTER_REQUEST]: {
     handler: monsterSpawnHandler,
     prototype: 'gamePacket.C2SSpawnMonsterRequest',
   },
-  [PacketType.MONSTER_ATTACK_BASE_REQUEST]: {
+  [packetType.MONSTER_ATTACK_BASE_REQUEST]: {
     handler: monsterAttackBaseHandler,
     prototype: 'gamePacket.C2SMonsterAttackBaseRequest',
   },
-  [PacketType.TOWER_ATTACK_REQUEST]: {
+  [packetType.TOWER_ATTACK_REQUEST]: {
     handler: towerAttackHandler,
     prototype: 'gamePacket.C2STowerAttackRequest',
   },
-  [PacketType.MONSTER_DEATH_NOTIFICATION]: {
+  [packetType.MONSTER_DEATH_NOTIFICATION]: {
     handler: monsterDeathHandler,
     prototype: 'gamePacket.C2SMonsterDeathNotification',
   },
-  [PacketType.TOWER_PURCHASE_REQUEST]: {
+  [packetType.TOWER_PURCHASE_REQUEST]: {
     handler: towerPurchaseHandler,
     prototype: 'gamePacket.C2STowerPurchaseRequest',
   },
-  [PacketType.GAME_END_REQUEST]: {
+  [packetType.GAME_END_REQUEST]: {
     handler: endGameHandler,
     prototype: 'gamePacket.C2SGameEndRequest',
   },

@@ -1,7 +1,9 @@
-import { PacketType } from '../../constants/packetTypes.js';
+import { config } from '../../config/config.js';
 import { getGameSession } from '../../session/game.session.js';
 import { getUser } from '../../session/user.session.js';
 import { createNotificationPacket } from '../../utils/notification/game.notification.js';
+
+const packetType = config.packet.type;
 
 const towerAttackHandler = (socket, payload) => {
   try {
@@ -41,7 +43,7 @@ const towerAttackHandler = (socket, payload) => {
     opponent.socket.write(
       createNotificationPacket(
         towerAttackData,
-        PacketType.ENEMY_TOWER_ATTACK_NOTIFICATION,
+        packetType.ENEMY_TOWER_ATTACK_NOTIFICATION,
         opponent.getSequence(),
       ),
     );

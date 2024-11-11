@@ -1,4 +1,4 @@
-import { PacketType } from '../../constants/packetTypes.js';
+import { config } from '../../config/config.js';
 import { createWOL, findWOLById, updateWOL } from '../../db/game/wol.db.js';
 import {
   addEndGameQueue,
@@ -11,6 +11,8 @@ import {
 } from '../../session/game.session.js';
 import { getUser } from '../../session/user.session.js';
 import { createNotificationPacket } from '../../utils/notification/game.notification.js';
+
+const packetType = config.packet.type;
 
 // 게임 종료 처리
 const endGameHandler = async (socket, payload) => {
@@ -54,7 +56,7 @@ const endGameHandler = async (socket, payload) => {
       const isWin = index === 0 ? isCurrentUserWin : isOpponentWin;
       return createNotificationPacket(
         { isWin },
-        PacketType.GAME_OVER_NOTIFICATION,
+        packetType.GAME_OVER_NOTIFICATION,
         user.getSequence(),
       );
     });

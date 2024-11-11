@@ -1,8 +1,10 @@
-import { PacketType } from '../../constants/packetTypes.js';
+import { config } from '../../config/config.js';
 import { getGameSession } from '../../session/game.session.js';
 import { getUser } from '../../session/user.session.js';
 import { createNotificationPacket } from '../../utils/notification/game.notification.js';
 import createResponse from '../../utils/response/createResponse.js';
+
+const packetType = config.packet.type;
 
 let tmpId = 5;
 const towerPurchaseHandler = async (socket, payload) => {
@@ -38,7 +40,7 @@ const towerPurchaseHandler = async (socket, payload) => {
     const notificationData = { towerId: tower.id, x, y };
     const addEnemyTowerNotification = createNotificationPacket(
       notificationData,
-      PacketType.ADD_ENEMY_TOWER_NOTIFICATION,
+      packetType.ADD_ENEMY_TOWER_NOTIFICATION,
       opponent.getSequence(),
     );
     opponent.socket.write(addEnemyTowerNotification);
@@ -47,7 +49,7 @@ const towerPurchaseHandler = async (socket, payload) => {
     const towerPurchaseResponse = createResponse(
       responseData,
       user,
-      PacketType.TOWER_PURCHASE_RESPONSE,
+      packetType.TOWER_PURCHASE_RESPONSE,
     );
     socket.write(towerPurchaseResponse);
   } catch (err) {

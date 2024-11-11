@@ -1,7 +1,9 @@
 import { createUser, findUserById } from '../../db/user/user.db.js';
 import createResponse from '../../utils/response/createResponse.js';
-import { PacketType } from '../../constants/packetTypes.js';
 import joiUtils from '../../utils/joi/joi.js';
+import { config } from '../../config/config.js';
+
+const packetType = config.packet.type;
 
 // TODO: email 검증, id 길이 검증, password 암호화
 const userRegisterHandler = async (socket, payload) => {
@@ -21,7 +23,7 @@ const userRegisterHandler = async (socket, payload) => {
           failCode: 3,
         },
         null,
-        PacketType.REGISTER_RESPONSE,
+        packetType.REGISTER_RESPONSE,
       );
       console.log(`Error response created: ${errorResponse}`);
 
@@ -39,7 +41,7 @@ const userRegisterHandler = async (socket, payload) => {
       failCode: 0,
     };
 
-    const response = createResponse(responsePayload, null, PacketType.REGISTER_RESPONSE);
+    const response = createResponse(responsePayload, null, packetType.REGISTER_RESPONSE);
     console.log(`Success response created: ${response}`);
 
     socket.write(response);

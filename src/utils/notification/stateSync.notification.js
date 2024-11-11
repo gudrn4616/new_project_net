@@ -1,5 +1,7 @@
-import { PacketType } from '../../constants/packetTypes.js';
+import { config } from '../../config/config.js';
 import { createNotificationPacket } from './game.notification.js';
+
+const packetType = config.packet.type;
 
 const stateSyncNotification = (game, user) => {
   try {
@@ -25,7 +27,7 @@ const stateSyncNotification = (game, user) => {
 
     return createNotificationPacket(
       payload,
-      PacketType.STATE_SYNC_NOTIFICATION,
+      packetType.STATE_SYNC_NOTIFICATION,
       user.getSequence(),
     );
   } catch (err) {

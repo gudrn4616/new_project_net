@@ -1,8 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import { getGameSession } from '../../session/game.session.js';
 import createResponse from '../../utils/response/createResponse.js';
-import { PacketType } from '../../constants/packetTypes.js';
 import { createNotificationPacket } from '../../utils/notification/game.notification.js';
+import { config } from '../../config/config.js';
+
+const packetType = config.packet.type;
 
 let cnt = 1;
 const monsterSpawnHandler = async (socket, payload) => {
@@ -35,7 +37,7 @@ const monsterSpawnHandler = async (socket, payload) => {
     const monsetSpawnResponse = await createResponse(
       monsterSpawnResponseData,
       user,
-      PacketType.SPAWN_MONSTER_RESPONSE,
+      packetType.SPAWN_MONSTER_RESPONSE,
     );
 
     socket.write(monsetSpawnResponse);
@@ -43,7 +45,7 @@ const monsterSpawnHandler = async (socket, payload) => {
     opponent.socket.write(
       createNotificationPacket(
         monsterSpawnResponseData,
-        PacketType.SPAWN_ENEMY_MONSTER_NOTIFICATION,
+        packetType.SPAWN_ENEMY_MONSTER_NOTIFICATION,
         user.getSequence(),
       ),
     );

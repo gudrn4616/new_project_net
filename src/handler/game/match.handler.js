@@ -1,7 +1,6 @@
 import { getUser } from '../../session/user.session.js';
 import { addGameSession, getAllGameSession, getGameSession } from '../../session/game.session.js';
 import createResponse from '../../utils/response/createResponse.js';
-import { PacketType } from '../../constants/packetTypes.js';
 import {
   getWaitingQueue,
   addWaitingQueue,
@@ -13,6 +12,9 @@ import {
   addEndGameQueue,
   removeEndGameQueue,
 } from '../../session/game.session.js';
+import { config } from '../../config/config.js';
+
+const packetType = config.packet.type;
 
 const matchHandler = async (socket, data) => {
   // 현재 유저 가져오기
@@ -73,8 +75,8 @@ const matchHandler = async (socket, data) => {
     console.log('=================');
     */
 
-    const response1 = createResponse(responsePayload1, user1, PacketType.MATCH_START_NOTIFICATION);
-    const response2 = createResponse(responsePayload2, user2, PacketType.MATCH_START_NOTIFICATION);
+    const response1 = createResponse(responsePayload1, user1, packetType.MATCH_START_NOTIFICATION);
+    const response2 = createResponse(responsePayload2, user2, packetType.MATCH_START_NOTIFICATION);
     user1.socket.write(response1);
     user2.socket.write(response2);
   }

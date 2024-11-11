@@ -1,7 +1,9 @@
-import { PacketType } from '../../constants/packetTypes.js';
+import { config } from '../../config/config.js';
 import { getGameSession } from '../../session/game.session.js';
 import { getUser } from '../../session/user.session.js';
 import { createNotificationPacket } from '../../utils/notification/game.notification.js';
+
+const packetType = config.packet.type;
 
 const monsterDeathHandler = (socket, payload) => {
   try {
@@ -38,7 +40,7 @@ const monsterDeathHandler = (socket, payload) => {
 
     const notification = createNotificationPacket(
       enemyMonsterDeathPayload,
-      PacketType.ENEMY_MONSTER_DEATH_NOTIFICATION,
+      packetType.ENEMY_MONSTER_DEATH_NOTIFICATION,
       user.getSequence(),
     );
 

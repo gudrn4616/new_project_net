@@ -1,10 +1,12 @@
 import jwt from 'jsonwebtoken';
 import createResponse from '../../utils/response/createResponse.js';
-import { PacketType } from '../../constants/packetTypes.js';
 import { findUserById } from '../../db/user/user.db.js';
 import bcrypt from 'bcrypt';
 import { addUser } from '../../session/user.session.js';
-import { getAllUsers } from '../../session/user.session.js'
+import { getAllUsers } from '../../session/user.session.js';
+import { config } from '../../config/config.js';
+
+const packetType = config.packet.type;
 
 const userLoginHandler = async (socket, payload) => {
   try {
@@ -23,14 +25,13 @@ const userLoginHandler = async (socket, payload) => {
           failCode: 3,
         },
         null,
-        PacketType.LOGIN_RESPONSE,
+        packetType.LOGIN_RESPONSE,
       );
 
       socket.write(errorResponse);
       return;
     }
 
-    
     if (!(await bcrypt.compare(password, user.password))) {
       console.error(`${socket}: 비밀번호가 틀렸습니다.`);
       const errorResponse = createResponse(
@@ -41,17 +42,17 @@ const userLoginHandler = async (socket, payload) => {
           failCode: 3,
         },
         null,
-        PacketType.LOGIN_RESPONSE,
+        packetType.LOGIN_RESPONSE,
       );
 
       socket.write(errorResponse);
       return;
     }
 
-    const findId = user.user_id
-    const userList = getAllUsers().map(user => user.playerId)
+    const findId = user.user_id;
+    const userList = getAllUsers().map((user) => user.playerId);
     const isLoginStatus = userList.includes(findId);
-    
+
     if (isLoginStatus) {
       console.error(`"${findId}" 회원은 이미 로그인 상태입니다.`);
       const errorResponse = createResponse(
@@ -62,13 +63,12 @@ const userLoginHandler = async (socket, payload) => {
           failCode: 3,
         },
         null,
-        PacketType.LOGIN_RESPONSE,
+        packetType.LOGIN_RESPONSE,
       );
 
       socket.write(errorResponse);
       return;
     }
-
 
     const TEMP_SECRET_KEY = 'temporary_secret_key';
 
@@ -84,7 +84,7 @@ const userLoginHandler = async (socket, payload) => {
 
     const userSession = await addUser(socket, user.account_id, user.user_id, 0);
 
-    const response = createResponse(responsePayload, userSession, PacketType.LOGIN_RESPONSE);
+    const response = createResponse(responsePayload, userSession, packetType.LOGIN_RESPONSE);
 
     console.log('Sending response:', response);
 
