@@ -27,7 +27,10 @@ const matchHandler = async (socket) => {
 
   // 현재 유저를 매칭 대기열에 추가
   addWaitingQueue(currentUser);
-  console.log('매칭 대기열:', getWaitingQueue());
+  console.log(
+    '매칭 대기열:',
+    Array.from(getWaitingQueue()).map((user) => user.id),
+  );
 
   // 매칭 대기열에 2명 이상이면 게임 매칭 시작
   if (getWaitingQueue().size >= 2) {

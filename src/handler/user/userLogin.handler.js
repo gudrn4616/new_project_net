@@ -14,7 +14,7 @@ const userLoginHandler = async (socket, payload) => {
     const password = payload.password;
     const user = await findUserById(id);
 
-    console.log('login user:', user);
+    //console.log('login user:', user);
     if (!user) {
       console.error(`${id} 유저가 존재하지 않습니다.`);
       const errorResponse = createResponse(
@@ -86,7 +86,7 @@ const userLoginHandler = async (socket, payload) => {
 
     const response = createResponse(responsePayload, userSession, packetType.LOGIN_RESPONSE);
 
-    console.log('Sending response:', response);
+    //console.log('Sending response:', response);
 
     socket.write(response);
   } catch (err) {
